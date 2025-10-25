@@ -21,89 +21,92 @@ public class ClassIntroController : MonoBehaviour
         
         public int health;
         public int damage;
-        public int speed; // 1-4 stars
+        public int speed;
         
         [Header("Layout")]
-        public bool useFlippedLayout = false; // Toggle to use Character2Scene
+        public bool useFlippedLayout = false;
     }
     
     [System.Serializable]
     public class Ability
     {
         public string abilityName;
-        public string abilityIcon; // emoji or icon name
+        public string abilityIcon;
         [TextArea(2, 3)]
         public string description;
     }
     
     [Header("Scene References")]
     public GameObject openingScene;
-    public GameObject character1Scene; // Original layout
-    public GameObject character2Scene; // Flipped layout
+    public GameObject character1Scene;
+    public GameObject character2Scene;
     
     [Header("Opening Scene")]
     public TextMeshProUGUI openingText;
     public TextMeshProUGUI questionText;
     
-    [Header("Character1Scene - Original Layout")]
+    [Header("Character Scenes")]
     public TextMeshProUGUI characterTitle1;
     public TextMeshProUGUI characterSubtitle1;
     public Image characterSpriteImage1;
     public TextMeshProUGUI backgroundText1;
     public Transform abilitiesContainer1;
+    public Button continueButton1; // NEW! Continue button for character1
     public GameObject abilityPrefab;
     
-    [Header("Character2Scene - Flipped Layout")]
     public TextMeshProUGUI characterTitle2;
     public TextMeshProUGUI characterSubtitle2;
     public Image characterSpriteImage2;
     public TextMeshProUGUI backgroundText2;
     public Transform abilitiesContainer2;
+    public Button continueButton2; // NEW! Continue button for character2
     
     [Header("Character Classes")]
     public CharacterClass[] classes;
     
     [Header("Settings")]
-    public float sceneDuration = 4f;
+    public float typewriterSpeed = 0.05f;
     public float fadeDuration = 1f;
+    public Color flameColor1 = new Color(1f, 0.3f, 0f, 1f); // Orange
+    public Color flameColor2 = new Color(0.8f, 0.1f, 0f, 1f); // Dark red-orange
+    public bool autoAdvance = false; // Set to false for manual control
+    public float autoAdvanceDelay = 4f; // Only used if autoAdvance is true
     public KeyCode skipKey = KeyCode.Space;
-    public string nextSceneName = "Ricardo_Workspace";
+    public string nextSceneName = "FirstMap";
     
-    private int currentClassIndex = -1; // -1 = opening
+    private int currentClassIndex = -1;
     private CanvasGroup openingCanvasGroup;
     private CanvasGroup character1CanvasGroup;
     private CanvasGroup character2CanvasGroup;
     private bool isTransitioning = false;
     private bool usingFlippedLayout = false;
+    private bool waitingForInput = false;
     
     void Start()
     {
         SetupCanvasGroups();
+        SetupButtons();
         StartCoroutine(PlayIntroSequence());
     }
     
     void Update()
     {
-        if (Input.GetKeyDown(skipKey) && !isTransitioning)
+        if (Input.GetKeyDown(skipKey) && waitingForInput && !isTransitioning)
         {
-            StopAllCoroutines();
-            StartCoroutine(SkipToNext());
+            OnContinuePressed();
         }
     }
     
     void SetupCanvasGroups()
     {
-        // Setup opening scene canvas group
         openingCanvasGroup = openingScene.GetComponent<CanvasGroup>();
         if (openingCanvasGroup == null)
             openingCanvasGroup = openingScene.AddComponent<CanvasGroup>();
         
-        // Setup Character1Scene canvas group
         character1CanvasGroup = character1Scene.GetComponent<CanvasGroup>();
         if (character1CanvasGroup == null)
             character1CanvasGroup = character1Scene.AddComponent<CanvasGroup>();
         
-        // Setup Character2Scene canvas group
         if (character2Scene != null)
         {
             character2CanvasGroup = character2Scene.GetComponent<CanvasGroup>();
@@ -111,7 +114,6 @@ public class ClassIntroController : MonoBehaviour
                 character2CanvasGroup = character2Scene.AddComponent<CanvasGroup>();
         }
         
-        // Initial state: opening active, character scenes inactive
         openingScene.SetActive(true);
         character1Scene.SetActive(false);
         if (character2Scene != null)
@@ -123,51 +125,159 @@ public class ClassIntroController : MonoBehaviour
             character2CanvasGroup.alpha = 0f;
     }
     
+    void SetupButtons()
+    {
+        if (continueButton1 != null)
+        {
+            continueButton1.onClick.AddListener(OnContinuePressed);
+            continueButton1.gameObject.SetActive(false);
+        }
+        
+        if (continueButton2 != null)
+        {
+            continueButton2.onClick.AddListener(OnContinuePressed);
+            continueButton2.gameObject.SetActive(false);
+        }
+    }
+    
     IEnumerator PlayIntroSequence()
     {
-        // Show opening question
-        yield return ShowOpening();
-        yield return new WaitForSeconds(sceneDuration);
+        yield return ShowOpeningWithFlameText();
         
-        // Show each character class
         for (int i = 0; i < classes.Length; i++)
         {
             yield return TransitionToCharacter(i);
-            yield return new WaitForSeconds(sceneDuration);
+            
+            // Wait for button press or auto-advance
+            waitingForInput = true;
+            ShowContinueButton(true);
+            
+            if (autoAdvance)
+            {
+                yield return new WaitForSeconds(autoAdvanceDelay);
+                waitingForInput = false;
+            }
+            else
+            {
+                // Wait until player presses continue
+                while (waitingForInput)
+                {
+                    yield return null;
+                }
+            }
+            
+            ShowContinueButton(false);
         }
         
-        // Transition to class selection
         LoadClassSelection();
     }
     
-    IEnumerator ShowOpening()
+    // NEW! Flame-colored text that appears slowly
+    IEnumerator ShowOpeningWithFlameText()
     {
         isTransitioning = true;
         openingScene.SetActive(true);
         
-        // Set text
-        openingText.text = "In a dungeon, where danger is hidden\nand can come from every place...";
-        questionText.text = "Which class are you going to take?";
+        // Clear both texts at start
+        string openingFullText = openingText.text;
+        string questionFullText = questionText.text;
+        openingText.text = "";
+        questionText.text = "";
         
-        // Fade in
         yield return FadeCanvasGroup(openingCanvasGroup, 0f, 1f, fadeDuration);
+        
+        // First text appears letter-by-letter in flame colors
+        yield return FlameTypewriter(openingText, openingFullText, typewriterSpeed);
+        
+        // Small pause to read
+        yield return new WaitForSeconds(0.5f);
+        
+        // First text fades out completely
+        yield return FadeOutText(openingText, 1f);
+        
+        // THEN question appears letter-by-letter
+        yield return FlameTypewriter(questionText, questionFullText, typewriterSpeed);
+        
         isTransitioning = false;
+    }
+    
+    // NEW! Typewriter with flame color pulsing
+    IEnumerator FlameTypewriter(TextMeshProUGUI textComponent, string fullText, float delay)
+    {
+        textComponent.text = "";
+        textComponent.color = flameColor1; // Start with flame color
+        
+        // Continuously pulse the color while typing
+        Coroutine pulseCoroutine = StartCoroutine(ContinuousPulse(textComponent));
+        
+        foreach (char c in fullText)
+        {
+            textComponent.text += c;
+            yield return new WaitForSeconds(delay);
+        }
+        
+        // Stop pulsing
+        StopCoroutine(pulseCoroutine);
+    }
+    
+    // NEW! Continuous color pulsing between orange and red
+    IEnumerator ContinuousPulse(TextMeshProUGUI textComponent)
+    {
+        while (true)
+        {
+            float t = Mathf.PingPong(Time.time * 2f, 1f);
+            textComponent.color = Color.Lerp(flameColor1, flameColor2, t);
+            yield return null;
+        }
+    }
+    
+    // NEW! Fade out text completely
+    IEnumerator FadeOutText(TextMeshProUGUI textComponent, float duration)
+    {
+        Color startColor = textComponent.color;
+        Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+        
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            textComponent.color = Color.Lerp(startColor, endColor, elapsed / duration);
+            yield return null;
+        }
+        
+        // Fully hide
+        textComponent.color = endColor;
+        textComponent.text = "";
+    }
+    
+    void ShowContinueButton(bool show)
+    {
+        Button currentButton = usingFlippedLayout ? continueButton2 : continueButton1;
+        if (currentButton != null)
+        {
+            currentButton.gameObject.SetActive(show);
+        }
+    }
+    
+    public void OnContinuePressed()
+    {
+        if (waitingForInput)
+        {
+            waitingForInput = false;
+        }
     }
     
     IEnumerator TransitionToCharacter(int classIndex)
     {
         isTransitioning = true;
         
-        // Fade out current scene
         if (currentClassIndex == -1)
         {
-            // Coming from opening
             yield return FadeCanvasGroup(openingCanvasGroup, 1f, 0f, fadeDuration);
             openingScene.SetActive(false);
         }
         else
         {
-            // Coming from another character - fade out the active one
             if (usingFlippedLayout && character2CanvasGroup != null)
             {
                 yield return FadeCanvasGroup(character2CanvasGroup, 1f, 0f, fadeDuration);
@@ -180,13 +290,10 @@ public class ClassIntroController : MonoBehaviour
             }
         }
         
-        // Setup new character
         currentClassIndex = classIndex;
         usingFlippedLayout = classes[classIndex].useFlippedLayout;
-        
         SetupCharacterDisplay(classes[classIndex], usingFlippedLayout);
         
-        // Fade in the correct character scene
         if (usingFlippedLayout && character2Scene != null)
         {
             character2Scene.SetActive(true);
@@ -203,42 +310,46 @@ public class ClassIntroController : MonoBehaviour
     
     void SetupCharacterDisplay(CharacterClass charClass, bool flipped)
     {
-        // Choose which UI elements to use
         TextMeshProUGUI title = flipped ? characterTitle2 : characterTitle1;
         TextMeshProUGUI subtitle = flipped ? characterSubtitle2 : characterSubtitle1;
         Image sprite = flipped ? characterSpriteImage2 : characterSpriteImage1;
         TextMeshProUGUI background = flipped ? backgroundText2 : backgroundText1;
         Transform abilitiesParent = flipped ? abilitiesContainer2 : abilitiesContainer1;
         
-        // Set title and subtitle
         title.text = charClass.className.ToUpper();
         title.color = charClass.themeColor;
         subtitle.text = $"\"{charClass.subtitle}\"";
         
-        // Set character sprite
         sprite.sprite = charClass.characterSprite;
         sprite.color = Color.white;
         
-        // Set background text
         background.text = charClass.background;
         
-        // Clear and populate abilities
         foreach (Transform child in abilitiesParent)
         {
             Destroy(child.gameObject);
         }
         
-        foreach (Ability ability in charClass.abilities)
+        if (abilityPrefab != null)
         {
-            GameObject abilityObj = Instantiate(abilityPrefab, abilitiesParent);
-            
-            // Find ability components
-            TextMeshProUGUI abilityName = abilityObj.transform.Find("AbilityName").GetComponent<TextMeshProUGUI>();
-            TextMeshProUGUI abilityDesc = abilityObj.transform.Find("AbilityDescription").GetComponent<TextMeshProUGUI>();
-            
-            abilityName.text = $"{ability.abilityIcon} {ability.abilityName}";
-            abilityName.color = charClass.themeColor;
-            abilityDesc.text = ability.description;
+            foreach (Ability ability in charClass.abilities)
+            {
+                GameObject abilityObj = Instantiate(abilityPrefab, abilitiesParent);
+                
+                TextMeshProUGUI abilityName = abilityObj.transform.Find("AbilityName").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI abilityDesc = abilityObj.transform.Find("AbilityDescription").GetComponent<TextMeshProUGUI>();
+                
+                if (abilityName != null)
+                {
+                    abilityName.text = $"{ability.abilityIcon} {ability.abilityName}";
+                    abilityName.color = charClass.themeColor;
+                }
+                
+                if (abilityDesc != null)
+                {
+                    abilityDesc.text = ability.description;
+                }
+            }
         }
     }
     
@@ -248,17 +359,14 @@ public class ClassIntroController : MonoBehaviour
         
         if (currentClassIndex == -1)
         {
-            // Skip opening, go to first character
             yield return TransitionToCharacter(0);
         }
         else if (currentClassIndex < classes.Length - 1)
         {
-            // Go to next character
             yield return TransitionToCharacter(currentClassIndex + 1);
         }
         else
         {
-            // End of sequence
             LoadClassSelection();
         }
         
@@ -268,14 +376,12 @@ public class ClassIntroController : MonoBehaviour
     IEnumerator FadeCanvasGroup(CanvasGroup cg, float start, float end, float duration)
     {
         float elapsed = 0f;
-        
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             cg.alpha = Mathf.Lerp(start, end, elapsed / duration);
             yield return null;
         }
-        
         cg.alpha = end;
     }
     
@@ -284,70 +390,3 @@ public class ClassIntroController : MonoBehaviour
         SceneManager.LoadScene(nextSceneName);
     }
 }
-
-// SETUP GUIDE:
-/*
-HIERARCHY STRUCTURE:
-Canvas
-├── OpeningScene
-│   ├── OpeningText
-│   └── QuestionText
-├── Character1Scene (INACTIVE at start)
-│   ├── LeftSide
-│   │   └── CharacterSprite
-│   └── RightSide
-│       ├── CharacterTitle
-│       ├── CharacterSubtitle
-│       ├── BackgroundPanel
-│       │   ├── BackgroundHeader
-│       │   └── BackgroundText
-│       └── AbilitiesPanel
-│           ├── AbilitiesHeader
-│           └── AbilitiesContainer
-├── Character2Scene (INACTIVE at start) - FLIPPED VERSION
-│   ├── LeftSide (anchored RIGHT)
-│   │   └── CharacterSprite
-│   └── RightSide (anchored LEFT)
-│       ├── CharacterTitle
-│       ├── CharacterSubtitle
-│       ├── BackgroundPanel
-│       │   ├── BackgroundHeader
-│       │   └── BackgroundText
-│       └── AbilitiesPanel
-│           ├── AbilitiesHeader
-│           └── AbilitiesContainer
-└── SkipText
-
-INSPECTOR ASSIGNMENTS:
-Scene References:
-- Opening Scene: OpeningScene
-- Character1Scene: Character1Scene
-- Character2Scene: Character2Scene
-
-Opening Scene:
-- Opening Text: OpeningScene/OpeningText
-- Question Text: OpeningScene/QuestionText
-
-Character1Scene - Original Layout:
-- Character Title 1: Character1Scene/RightSide/CharacterTitle
-- Character Subtitle 1: Character1Scene/RightSide/CharacterSubtitle
-- Character Sprite Image 1: Character1Scene/LeftSide/CharacterSprite
-- Background Text 1: Character1Scene/RightSide/BackgroundPanel/BackgroundText
-- Abilities Container 1: Character1Scene/RightSide/AbilitiesPanel/AbilitiesContainer
-- Ability Prefab: (your prefab from Assets)
-
-Character2Scene - Flipped Layout:
-- Character Title 2: Character2Scene/RightSide/CharacterTitle
-- Character Subtitle 2: Character2Scene/RightSide/CharacterSubtitle
-- Character Sprite Image 2: Character2Scene/LeftSide/CharacterSprite
-- Background Text 2: Character2Scene/RightSide/BackgroundPanel/BackgroundText
-- Abilities Container 2: Character2Scene/RightSide/AbilitiesPanel/AbilitiesContainer
-
-CHARACTER CLASSES EXAMPLE:
-Element 0 - Warrior:
-- Use Flipped Layout: ☐ (unchecked) → Uses Character1Scene
-Element 1 - Mage:
-- Use Flipped Layout: ☑ (checked) → Uses Character2Scene
-Element 2 - Rogue:
-- Use Flipped Layout: ☐ (unchecked) → Uses Character1Scene
-*/
