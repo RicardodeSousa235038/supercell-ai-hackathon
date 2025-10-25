@@ -6,7 +6,6 @@ public class GameStateManager : MonoBehaviour
 
     public enum GameState
     {
-        WorldMap,
         TownMap,
         Town1,
         Town2,
@@ -19,7 +18,6 @@ public class GameStateManager : MonoBehaviour
     }
 
     [Header("State Objects")]
-    public GameObject worldMapObjects;
     public GameObject townMapObjects;
     public GameObject town1Objects;
     public GameObject town2Objects;
@@ -32,7 +30,6 @@ public class GameStateManager : MonoBehaviour
 
     [Header("Backgrounds")]
     public SpriteRenderer backgroundRenderer;
-    public Sprite worldMapBackground;
     public Sprite townMapBackground;
     public Sprite town1Background;
     public Sprite town2Background;
@@ -45,7 +42,6 @@ public class GameStateManager : MonoBehaviour
 
     [Header("Camera")]
     public Camera mainCamera;
-    public Vector3 worldMapCameraPos = new Vector3(0, 0, -10);
     public Vector3 townMapCameraPos = new Vector3(0, 0, -10);
     public Vector3 town1CameraPos = new Vector3(0, 0, -10);
     public Vector3 town2CameraPos = new Vector3(0, 0, -10);
@@ -72,7 +68,7 @@ public class GameStateManager : MonoBehaviour
 
     void Start()
     {
-        SwitchState(GameState.WorldMap);
+        SwitchState(GameState.TownMap);  // Start with Town Map instead
     }
 
     public void SwitchState(GameState newState)
@@ -80,7 +76,6 @@ public class GameStateManager : MonoBehaviour
         currentState = newState;
 
         // Disable all states
-        worldMapObjects.SetActive(false);
         townMapObjects.SetActive(false);
         town1Objects.SetActive(false);
         town2Objects.SetActive(false);
@@ -94,12 +89,6 @@ public class GameStateManager : MonoBehaviour
         // Enable and setup current state
         switch (currentState)
         {
-            case GameState.WorldMap:
-                worldMapObjects.SetActive(true);
-                backgroundRenderer.sprite = worldMapBackground;
-                mainCamera.transform.position = worldMapCameraPos;
-                break;
-
             case GameState.TownMap:
                 townMapObjects.SetActive(true);
                 backgroundRenderer.sprite = townMapBackground;
