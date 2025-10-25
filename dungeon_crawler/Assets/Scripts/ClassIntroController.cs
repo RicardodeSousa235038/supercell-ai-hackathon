@@ -67,7 +67,7 @@ public class ClassIntroController : MonoBehaviour
     public float sceneDuration = 4f;
     public float fadeDuration = 1f;
     public KeyCode skipKey = KeyCode.Space;
-    public string nextSceneName = "ClassSelection";
+    public string nextSceneName = "Ricardo_Workspace";
     
     private int currentClassIndex = -1; // -1 = opening
     private CanvasGroup openingCanvasGroup;
