@@ -3,45 +3,61 @@ using UnityEngine;
 public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance;
-    
+
     public enum GameState
     {
         WorldMap,
-        TownExploration,
-        DungeonExploration1,
-        DungeonExploration2,
-        DungeonExploration3,
+        TownMap,
+        Town1,
+        Town2,
+        Town3,
+        DungeonMap,
+        Dungeon1,
+        Dungeon2,
+        Dungeon3,
         Battle
     }
-    
+
     [Header("State Objects")]
     public GameObject worldMapObjects;
-    public GameObject townExplorationObjects;
+    public GameObject townMapObjects;
+    public GameObject town1Objects;
+    public GameObject town2Objects;
+    public GameObject town3Objects;
+    public GameObject dungeonMapObjects;
     public GameObject dungeon1Objects;
     public GameObject dungeon2Objects;
     public GameObject dungeon3Objects;
     public GameObject battleObjects;
-    
+
     [Header("Backgrounds")]
     public SpriteRenderer backgroundRenderer;
     public Sprite worldMapBackground;
-    public Sprite townBackground;
+    public Sprite townMapBackground;
+    public Sprite town1Background;
+    public Sprite town2Background;
+    public Sprite town3Background;
+    public Sprite dungeonMapBackground;
     public Sprite dungeon1Background;
     public Sprite dungeon2Background;
     public Sprite dungeon3Background;
     public Sprite battleBackground;
-    
+
     [Header("Camera")]
     public Camera mainCamera;
     public Vector3 worldMapCameraPos = new Vector3(0, 0, -10);
-    public Vector3 townCameraPos = new Vector3(0, 0, -10);
+    public Vector3 townMapCameraPos = new Vector3(0, 0, -10);
+    public Vector3 town1CameraPos = new Vector3(0, 0, -10);
+    public Vector3 town2CameraPos = new Vector3(0, 0, -10);
+    public Vector3 town3CameraPos = new Vector3(0, 0, -10);
+    public Vector3 dungeonMapCameraPos = new Vector3(0, 0, -10);
     public Vector3 dungeon1CameraPos = new Vector3(0, 0, -10);
     public Vector3 dungeon2CameraPos = new Vector3(0, 0, -10);
     public Vector3 dungeon3CameraPos = new Vector3(0, 0, -10);
     public Vector3 battleCameraPos = new Vector3(0, 0, -10);
-    
+
     private GameState currentState;
-    
+
     void Awake()
     {
         if (Instance == null)
@@ -53,24 +69,28 @@ public class GameStateManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
+
     void Start()
     {
         SwitchState(GameState.WorldMap);
     }
-    
+
     public void SwitchState(GameState newState)
     {
         currentState = newState;
-        
+
         // Disable all states
         worldMapObjects.SetActive(false);
-        townExplorationObjects.SetActive(false);
+        townMapObjects.SetActive(false);
+        town1Objects.SetActive(false);
+        town2Objects.SetActive(false);
+        town3Objects.SetActive(false);
+        dungeonMapObjects.SetActive(false);
         dungeon1Objects.SetActive(false);
         dungeon2Objects.SetActive(false);
         dungeon3Objects.SetActive(false);
         battleObjects.SetActive(false);
-        
+
         // Enable and setup current state
         switch (currentState)
         {
@@ -79,31 +99,55 @@ public class GameStateManager : MonoBehaviour
                 backgroundRenderer.sprite = worldMapBackground;
                 mainCamera.transform.position = worldMapCameraPos;
                 break;
-                
-            case GameState.TownExploration:
-                townExplorationObjects.SetActive(true);
-                backgroundRenderer.sprite = townBackground;
-                mainCamera.transform.position = townCameraPos;
+
+            case GameState.TownMap:
+                townMapObjects.SetActive(true);
+                backgroundRenderer.sprite = townMapBackground;
+                mainCamera.transform.position = townMapCameraPos;
                 break;
-                
-            case GameState.DungeonExploration1:
+
+            case GameState.Town1:
+                town1Objects.SetActive(true);
+                backgroundRenderer.sprite = town1Background;
+                mainCamera.transform.position = town1CameraPos;
+                break;
+
+            case GameState.Town2:
+                town2Objects.SetActive(true);
+                backgroundRenderer.sprite = town2Background;
+                mainCamera.transform.position = town2CameraPos;
+                break;
+
+            case GameState.Town3:
+                town3Objects.SetActive(true);
+                backgroundRenderer.sprite = town3Background;
+                mainCamera.transform.position = town3CameraPos;
+                break;
+
+            case GameState.DungeonMap:
+                dungeonMapObjects.SetActive(true);
+                backgroundRenderer.sprite = dungeonMapBackground;
+                mainCamera.transform.position = dungeonMapCameraPos;
+                break;
+
+            case GameState.Dungeon1:
                 dungeon1Objects.SetActive(true);
                 backgroundRenderer.sprite = dungeon1Background;
                 mainCamera.transform.position = dungeon1CameraPos;
                 break;
-                
-            case GameState.DungeonExploration2:
+
+            case GameState.Dungeon2:
                 dungeon2Objects.SetActive(true);
                 backgroundRenderer.sprite = dungeon2Background;
                 mainCamera.transform.position = dungeon2CameraPos;
                 break;
-                
-            case GameState.DungeonExploration3:
+
+            case GameState.Dungeon3:
                 dungeon3Objects.SetActive(true);
                 backgroundRenderer.sprite = dungeon3Background;
                 mainCamera.transform.position = dungeon3CameraPos;
                 break;
-                
+
             case GameState.Battle:
                 battleObjects.SetActive(true);
                 backgroundRenderer.sprite = battleBackground;
@@ -111,7 +155,7 @@ public class GameStateManager : MonoBehaviour
                 break;
         }
     }
-    
+
     public GameState GetCurrentState()
     {
         return currentState;

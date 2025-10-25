@@ -2,7 +2,11 @@ using UnityEngine;
 
 public class CameraFollowPlayer : MonoBehaviour
 {
-    public Transform townPlayer;
+    public Transform townMapPlayer;
+    public Transform town1Player;
+    public Transform town2Player;
+    public Transform town3Player;
+    public Transform dungeonMapPlayer;
     public Transform dungeon1Player;
     public Transform dungeon2Player;
     public Transform dungeon3Player;
@@ -13,27 +17,38 @@ public class CameraFollowPlayer : MonoBehaviour
 
     void LateUpdate()
     {
-        // Get current active player based on state
         Transform currentPlayer = null;
 
         GameStateManager.GameState state = GameStateManager.Instance.GetCurrentState();
 
         switch (state)
         {
-            case GameStateManager.GameState.TownExploration:
-                currentPlayer = townPlayer;
+            case GameStateManager.GameState.TownMap:
+                currentPlayer = townMapPlayer;
                 break;
-            case GameStateManager.GameState.DungeonExploration1:
+            case GameStateManager.GameState.Town1:
+                currentPlayer = town1Player;
+                break;
+            case GameStateManager.GameState.Town2:
+                currentPlayer = town2Player;
+                break;
+            case GameStateManager.GameState.Town3:
+                currentPlayer = town3Player;
+                break;
+            case GameStateManager.GameState.DungeonMap:
+                currentPlayer = dungeonMapPlayer;
+                break;
+            case GameStateManager.GameState.Dungeon1:
                 currentPlayer = dungeon1Player;
                 break;
-            case GameStateManager.GameState.DungeonExploration2:
+            case GameStateManager.GameState.Dungeon2:
                 currentPlayer = dungeon2Player;
                 break;
-            case GameStateManager.GameState.DungeonExploration3:
+            case GameStateManager.GameState.Dungeon3:
                 currentPlayer = dungeon3Player;
                 break;
             default:
-                return; // Don't follow in other states
+                return;
         }
 
         if (currentPlayer == null) return;

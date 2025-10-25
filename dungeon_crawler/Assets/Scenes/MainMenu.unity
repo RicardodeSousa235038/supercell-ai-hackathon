@@ -10555,7 +10555,7 @@ GameObject:
   - component: {fileID: 875676572}
   - component: {fileID: 875676571}
   m_Layer: 0
-  m_Name: Assassin
+  m_Name: Vampire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10569,15 +10569,15 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 875676569}
   m_LocalRotation: {x: -0, y: -0.19567047, z: -0, w: 0.98066974}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalPosition: {x: 0, y: 0, z: 19}
+  m_LocalScale: {x: 6, y: 6, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 696189290}
   m_LocalEulerAnglesHint: {x: 0, y: -22.568, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -305, y: 59}
+  m_AnchoredPosition: {x: -260, y: 205}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &875676571
@@ -10600,7 +10600,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 4257d9dbb4cc10546b4565678786794b, type: 3}
+  m_Texture: {fileID: 2800000, guid: 3c3888c71dcc9a64880b705bb4782ec5, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
