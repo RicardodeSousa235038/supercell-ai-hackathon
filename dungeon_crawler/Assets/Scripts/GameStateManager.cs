@@ -76,71 +76,89 @@ public class GameStateManager : MonoBehaviour
         currentState = newState;
 
         // Disable all states
-        townMapObjects.SetActive(false);
-        town1Objects.SetActive(false);
-        town2Objects.SetActive(false);
-        town3Objects.SetActive(false);
-        dungeonMapObjects.SetActive(false);
-        dungeon1Objects.SetActive(false);
-        dungeon2Objects.SetActive(false);
-        dungeon3Objects.SetActive(false);
-        battleObjects.SetActive(false);
+        if (townMapObjects != null) townMapObjects.SetActive(false);
+        if (town1Objects != null) town1Objects.SetActive(false);
+        if (town2Objects != null) town2Objects.SetActive(false);
+        if (town3Objects != null) town3Objects.SetActive(false);
+        if (dungeonMapObjects != null) dungeonMapObjects.SetActive(false);
+        if (dungeon1Objects != null) dungeon1Objects.SetActive(false);
+        if (dungeon2Objects != null) dungeon2Objects.SetActive(false);
+        if (dungeon3Objects != null) dungeon3Objects.SetActive(false);
+        if (battleObjects != null) battleObjects.SetActive(false);
 
         // Enable and setup current state
         switch (currentState)
         {
             case GameState.TownMap:
-                townMapObjects.SetActive(true);
-                backgroundRenderer.sprite = townMapBackground;
-                mainCamera.transform.position = townMapCameraPos;
+                if (townMapObjects != null) townMapObjects.SetActive(true);
+                if (backgroundRenderer != null && townMapBackground != null)
+                    backgroundRenderer.sprite = townMapBackground;
+                if (mainCamera != null)
+                    mainCamera.transform.position = townMapCameraPos;
                 break;
 
             case GameState.Town1:
-                town1Objects.SetActive(true);
-                backgroundRenderer.sprite = town1Background;
-                mainCamera.transform.position = town1CameraPos;
+                if (town1Objects != null) town1Objects.SetActive(true);
+                if (backgroundRenderer != null && town1Background != null)
+                    backgroundRenderer.sprite = town1Background;
+                if (mainCamera != null)
+                    mainCamera.transform.position = town1CameraPos;
                 break;
 
             case GameState.Town2:
-                town2Objects.SetActive(true);
-                backgroundRenderer.sprite = town2Background;
-                mainCamera.transform.position = town2CameraPos;
+                if (town2Objects != null) town2Objects.SetActive(true);
+                if (backgroundRenderer != null && town2Background != null)
+                    backgroundRenderer.sprite = town2Background;
+                if (mainCamera != null)
+                    mainCamera.transform.position = town2CameraPos;
                 break;
 
             case GameState.Town3:
-                town3Objects.SetActive(true);
-                backgroundRenderer.sprite = town3Background;
-                mainCamera.transform.position = town3CameraPos;
+                if (town3Objects != null) town3Objects.SetActive(true);
+                if (backgroundRenderer != null && town3Background != null)
+                    backgroundRenderer.sprite = town3Background;
+                if (mainCamera != null)
+                    mainCamera.transform.position = town3CameraPos;
                 break;
 
             case GameState.DungeonMap:
-                dungeonMapObjects.SetActive(true);
-                backgroundRenderer.sprite = dungeonMapBackground;
-                mainCamera.transform.position = dungeonMapCameraPos;
+                if (dungeonMapObjects != null) dungeonMapObjects.SetActive(true);
+                if (backgroundRenderer != null && dungeonMapBackground != null)
+                    backgroundRenderer.sprite = dungeonMapBackground;
+                if (mainCamera != null)
+                    mainCamera.transform.position = dungeonMapCameraPos;
                 break;
 
             case GameState.Dungeon1:
-                dungeon1Objects.SetActive(true);
-                backgroundRenderer.sprite = dungeon1Background;
-                mainCamera.transform.position = dungeon1CameraPos;
+                if (dungeon1Objects != null) dungeon1Objects.SetActive(true);
+                if (backgroundRenderer != null && dungeon1Background != null)
+                    backgroundRenderer.sprite = dungeon1Background;
+                if (mainCamera != null)
+                    mainCamera.transform.position = dungeon1CameraPos;
                 break;
 
             case GameState.Dungeon2:
-                dungeon2Objects.SetActive(true);
-                backgroundRenderer.sprite = dungeon2Background;
-                mainCamera.transform.position = dungeon2CameraPos;
+                if (dungeon2Objects != null) dungeon2Objects.SetActive(true);
+                if (backgroundRenderer != null && dungeon2Background != null)
+                    backgroundRenderer.sprite = dungeon2Background;
+                if (mainCamera != null)
+                    mainCamera.transform.position = dungeon2CameraPos;
                 break;
 
             case GameState.Dungeon3:
-                dungeon3Objects.SetActive(true);
-                backgroundRenderer.sprite = dungeon3Background;
-                mainCamera.transform.position = dungeon3CameraPos;
+                if (dungeon3Objects != null) dungeon3Objects.SetActive(true);
+                if (backgroundRenderer != null && dungeon3Background != null)
+                    backgroundRenderer.sprite = dungeon3Background;
+                if (mainCamera != null)
+                    mainCamera.transform.position = dungeon3CameraPos;
                 break;
 
             case GameState.Battle:
-                battleObjects.SetActive(true);
-                backgroundRenderer.sprite = battleBackground;
-                mainCamera.transform.position = battleCameraPos;
+                if (battleObjects != null) battleObjects.SetActive(true);
+                if (backgroundRenderer != null && battleBackground != null)
+                    backgroundRenderer.sprite = battleBackground;
+                if (mainCamera != null)
+                    mainCamera.transform.position = battleCameraPos;
                 break;
         }
     }

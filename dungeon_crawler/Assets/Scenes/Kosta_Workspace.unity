@@ -350,6 +350,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaTransition
   targetArea: 7
+  spawnPosition: {x: 5.72, y: -0.684, z: 0}
 --- !u!58 &404544113
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -779,6 +780,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaTransition
   targetArea: 0
+  spawnPosition: {x: 5.72, y: -0.684, z: 0}
 --- !u!58 &896340883
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1099,6 +1101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaTransition
   targetArea: 5
+  spawnPosition: {x: 5.72, y: -0.684, z: 0}
 --- !u!58 &959394481
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1240,6 +1243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaTransition
   targetArea: 2
+  spawnPosition: {x: 14.39, y: -1.71, z: 0}
 --- !u!58 &1259123243
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2303,6 +2307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaTransition
   targetArea: 3
+  spawnPosition: {x: 14.39, y: -1.71, z: 0}
 --- !u!58 &1586478428
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2640,6 +2645,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaTransition
   targetArea: 4
+  spawnPosition: {x: 14.39, y: -1.71, z: 0}
 --- !u!58 &1670742556
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2964,7 +2970,7 @@ MonoBehaviour:
   dungeon2Background: {fileID: -8956049406441571111, guid: e5d0a0c7bca1e91468eecf21dd6d0e26, type: 3}
   dungeon3Background: {fileID: 8133272220811792099, guid: 9a97c11bbe9751046907cd8b22dfcdb0, type: 3}
   battleBackground: {fileID: -8559102623221526158, guid: cd706552d55610f4ea15c8a9751a6f42, type: 3}
-  mainCamera: {fileID: 0}
+  mainCamera: {fileID: 1748424850}
   townMapCameraPos: {x: 0, y: 0, z: -10}
   town1CameraPos: {x: 0, y: 0, z: -10}
   town2CameraPos: {x: 0, y: 0, z: -10}
@@ -3036,6 +3042,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaTransition
   targetArea: 6
+  spawnPosition: {x: 5.72, y: -0.684, z: 0}
 --- !u!58 &1864817960
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3434,6 +3441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaTransition
   targetArea: 1
+  spawnPosition: {x: 14.39, y: -1.71, z: 0}
 --- !u!58 &2007447077
 CircleCollider2D:
   m_ObjectHideFlags: 0
