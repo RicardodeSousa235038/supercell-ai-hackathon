@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: cd706552d55610f4ea15c8a9751a6f42
+guid: 6503fb0360086dd4f883627efc1205fc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8559102623221526158
-    second: dungeon_ruins_background_0
+      213: 1454814443666240731
+    second: pixelated_carriage_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -77,7 +77,7 @@ TextureImporter:
     textureFormat: -1
     textureCompression: 0
     compressionQuality: 50
-    crunchedCompression: 1
+    crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: dungeon_ruins_background_0
+      name: pixelated_carriage_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 27154c22385f73980800000000000000
-      internalID: -8559102623221526158
+      spriteID: bd475d0570a803410800000000000000
+      internalID: 1454814443666240731
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      dungeon_ruins_background_0: -8559102623221526158
+      pixelated_carriage_0: 1454814443666240731
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
