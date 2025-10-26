@@ -1212,6 +1212,7 @@ GameObject:
   - component: {fileID: 509231073}
   - component: {fileID: 509231072}
   - component: {fileID: 509231071}
+  - component: {fileID: 509231074}
   m_Layer: 5
   m_Name: CharacterCard_5
   m_TagString: Untagged
@@ -1253,15 +1254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150edb2ce9a86d9449aafb4318a69db0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
-  characterName: Fighter
-  characterIndex: 0
-  characterSprite: {fileID: 0}
-  cardBackground: {fileID: 509231072}
-  characterSpriteImage: {fileID: 795263525}
-  characterNameText: {fileID: 1335012453}
-  normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
-  selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
-  selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
+  allCards: []
 --- !u!114 &509231072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1300,6 +1293,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 509231069}
   m_CullTransparentMesh: 1
+--- !u!114 &509231074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 509231069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa24392f6b15fa49babfbe7c9343ded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterCardSelector
+  characterClass: Vampire
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 1, g: 0.20213419, b: 0, a: 1}
+  cardImage: {fileID: 0}
+  selectionBorder: {fileID: 0}
 --- !u!1 &510658501
 GameObject:
   m_ObjectHideFlags: 0
@@ -1448,6 +1458,7 @@ GameObject:
   - component: {fileID: 510773039}
   - component: {fileID: 510773038}
   - component: {fileID: 510773037}
+  - component: {fileID: 510773040}
   m_Layer: 5
   m_Name: CharacterCard_4
   m_TagString: Untagged
@@ -1489,15 +1500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150edb2ce9a86d9449aafb4318a69db0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
-  characterName: Fighter
-  characterIndex: 0
-  characterSprite: {fileID: 0}
-  cardBackground: {fileID: 510773038}
-  characterSpriteImage: {fileID: 1562369192}
-  characterNameText: {fileID: 1156671939}
-  normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
-  selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
-  selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
+  allCards: []
 --- !u!114 &510773038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1536,6 +1539,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 510773035}
   m_CullTransparentMesh: 1
+--- !u!114 &510773040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 510773035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa24392f6b15fa49babfbe7c9343ded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterCardSelector
+  characterClass: 
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0, g: 1, b: 0, a: 1}
+  cardImage: {fileID: 0}
+  selectionBorder: {fileID: 0}
 --- !u!1 &536380190
 GameObject:
   m_ObjectHideFlags: 0
@@ -2093,6 +2113,7 @@ GameObject:
   - component: {fileID: 735828309}
   - component: {fileID: 735828308}
   - component: {fileID: 735828307}
+  - component: {fileID: 735828310}
   m_Layer: 5
   m_Name: CharacterCard_1
   m_TagString: Untagged
@@ -2134,15 +2155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150edb2ce9a86d9449aafb4318a69db0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
-  characterName: Fighter
-  characterIndex: 0
-  characterSprite: {fileID: 0}
-  cardBackground: {fileID: 735828308}
-  characterSpriteImage: {fileID: 826940360}
-  characterNameText: {fileID: 1128462597}
-  normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
-  selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
-  selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
+  allCards: []
 --- !u!114 &735828308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2181,6 +2194,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 735828305}
   m_CullTransparentMesh: 1
+--- !u!114 &735828310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735828305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa24392f6b15fa49babfbe7c9343ded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterCardSelector
+  characterClass: Fighter
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0, g: 1, b: 0, a: 1}
+  cardImage: {fileID: 0}
+  selectionBorder: {fileID: 0}
 --- !u!1 &740005969
 GameObject:
   m_ObjectHideFlags: 0
@@ -5017,6 +5047,7 @@ GameObject:
   - component: {fileID: 1383220307}
   - component: {fileID: 1383220306}
   - component: {fileID: 1383220305}
+  - component: {fileID: 1383220308}
   m_Layer: 5
   m_Name: CharacterCard_6
   m_TagString: Untagged
@@ -5058,15 +5089,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150edb2ce9a86d9449aafb4318a69db0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
-  characterName: Fighter
-  characterIndex: 0
-  characterSprite: {fileID: 0}
-  cardBackground: {fileID: 1383220306}
-  characterSpriteImage: {fileID: 332294995}
-  characterNameText: {fileID: 784754543}
-  normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
-  selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
-  selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
+  allCards: []
 --- !u!114 &1383220306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5105,6 +5128,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1383220303}
   m_CullTransparentMesh: 1
+--- !u!114 &1383220308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383220303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa24392f6b15fa49babfbe7c9343ded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterCardSelector
+  characterClass: Ranged
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0, g: 1, b: 0, a: 1}
+  cardImage: {fileID: 0}
+  selectionBorder: {fileID: 0}
 --- !u!1 &1410224216
 GameObject:
   m_ObjectHideFlags: 0
@@ -5623,6 +5663,7 @@ GameObject:
   - component: {fileID: 1534737032}
   - component: {fileID: 1534737031}
   - component: {fileID: 1534737030}
+  - component: {fileID: 1534737033}
   m_Layer: 5
   m_Name: CharacterCard_2
   m_TagString: Untagged
@@ -5664,15 +5705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150edb2ce9a86d9449aafb4318a69db0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
-  characterName: Fighter
-  characterIndex: 0
-  characterSprite: {fileID: 0}
-  cardBackground: {fileID: 1534737031}
-  characterSpriteImage: {fileID: 222296255}
-  characterNameText: {fileID: 1063581842}
-  normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
-  selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
-  selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
+  allCards: []
 --- !u!114 &1534737031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5711,6 +5744,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1534737028}
   m_CullTransparentMesh: 1
+--- !u!114 &1534737033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534737028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa24392f6b15fa49babfbe7c9343ded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterCardSelector
+  characterClass: Knight
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 0, g: 1, b: 0.7876234, a: 1}
+  cardImage: {fileID: 0}
+  selectionBorder: {fileID: 0}
 --- !u!1 &1562369190
 GameObject:
   m_ObjectHideFlags: 0
@@ -6156,6 +6206,7 @@ GameObject:
   - component: {fileID: 1718486334}
   - component: {fileID: 1718486333}
   - component: {fileID: 1718486332}
+  - component: {fileID: 1718486335}
   m_Layer: 5
   m_Name: CharacterCard_3
   m_TagString: Untagged
@@ -6197,15 +6248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 150edb2ce9a86d9449aafb4318a69db0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
-  characterName: Fighter
-  characterIndex: 0
-  characterSprite: {fileID: 0}
-  cardBackground: {fileID: 1718486333}
-  characterSpriteImage: {fileID: 1926760001}
-  characterNameText: {fileID: 1367411271}
-  normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
-  selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
-  selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
+  allCards: []
 --- !u!114 &1718486333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6244,6 +6287,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1718486330}
   m_CullTransparentMesh: 1
+--- !u!114 &1718486335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1718486330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faa24392f6b15fa49babfbe7c9343ded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterCardSelector
+  characterClass: Thief
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedColor: {r: 1, g: 0, b: 0.07038355, a: 1}
+  cardImage: {fileID: 0}
+  selectionBorder: {fileID: 0}
 --- !u!1 &1790921642
 GameObject:
   m_ObjectHideFlags: 0
