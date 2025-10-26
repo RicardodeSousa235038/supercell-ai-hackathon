@@ -14,12 +14,19 @@ public class PlayerMovement2D : MonoBehaviour
 
         if (rb == null)
         {
-            Debug.LogError("Rigidbody2D is missing!");
+            Debug.LogError("Rigidbody2D is missing on " + gameObject.name);
         }
     }
 
     void Update()
     {
+        // Check if GameStateManager exists
+        if (GameStateManager.Instance == null)
+        {
+            Debug.LogWarning("GameStateManager not found!");
+            return;
+        }
+
         // Only move if in an exploration state
         GameStateManager.GameState state = GameStateManager.Instance.GetCurrentState();
 
@@ -50,6 +57,9 @@ public class PlayerMovement2D : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Check if GameStateManager exists
+        if (GameStateManager.Instance == null) return;
+
         GameStateManager.GameState state = GameStateManager.Instance.GetCurrentState();
 
         if (state == GameStateManager.GameState.TownMap ||

@@ -5,14 +5,14 @@ public class RandomEncounterSystem : MonoBehaviour
 {
     [Header("Encounter Settings")]
     [Range(0f, 100f)]
-    public float encounterChance = 20f;  // 20% chance
-    public float checkInterval = 2f;  // Check every 2 seconds while moving
+    public float encounterChance = 20f;
+    public float checkInterval = 2f;
 
     [Header("Requirements")]
-    public float minDistanceToTrigger = 1f;  // Must move at least this far
+    public float minDistanceToTrigger = 1f;
 
     [Header("Enemy Setup")]
-    public GameObject[] possibleEnemies;  // Array of enemy prefabs
+    public GameObject[] possibleEnemies;
     public int minEnemies = 1;
     public int maxEnemies = 3;
 
@@ -29,11 +29,17 @@ public class RandomEncounterSystem : MonoBehaviour
 
     void Update()
     {
+        // CRITICAL: Check if GameStateManager exists FIRST!
+        if (GameStateManager.Instance == null)
+        {
+            return; // Exit immediately if no GameStateManager
+        }
+
         // Don't check during battles
         if (encounterActive) return;
         if (GameStateManager.Instance.GetCurrentState() == GameStateManager.GameState.Battle) return;
 
-        // Only check in dungeons (you can modify this)
+        // Only check in dungeons
         GameStateManager.GameState currentState = GameStateManager.Instance.GetCurrentState();
         if (currentState != GameStateManager.GameState.Dungeon1 &&
             currentState != GameStateManager.GameState.Dungeon2 &&
@@ -87,12 +93,14 @@ public class RandomEncounterSystem : MonoBehaviour
             }
         }
 
-        // Screen flash or transition effect (optional)
         Debug.Log("Battle starting!");
         yield return new WaitForSeconds(0.5f);
 
         // Switch to battle
-        GameStateManager.Instance.SwitchState(GameStateManager.GameState.Battle);
+        if (GameStateManager.Instance != null)
+        {
+            GameStateManager.Instance.SwitchState(GameStateManager.GameState.Battle);
+        }
 
         yield return new WaitForSeconds(0.3f);
 

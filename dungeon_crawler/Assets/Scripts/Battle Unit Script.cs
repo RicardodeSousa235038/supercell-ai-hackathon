@@ -9,6 +9,9 @@ public class BattleUnit : MonoBehaviour
     public int attackPower = 20;
     public int defense = 5;
 
+    [Header("Is This The Player?")]
+    public bool isPlayer = false;
+
     [Header("Visual")]
     public SpriteRenderer spriteRenderer;
 
@@ -16,7 +19,27 @@ public class BattleUnit : MonoBehaviour
 
     void Start()
     {
-        currentHealth = maxHealth;
+        // If this is the player, use CharacterManager stats
+        if (isPlayer && CharacterManager.Instance != null)
+        {
+            unitName = CharacterManager.Instance.selectedCharacterClass;
+            maxHealth = CharacterManager.Instance.playerMaxHealth;
+            currentHealth = CharacterManager.Instance.playerHealth;
+            attackPower = CharacterManager.Instance.playerDamage;
+            defense = CharacterManager.Instance.playerDefense;
+
+            // Apply player sprite
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sprite = CharacterManager.Instance.GetSelectedCharacterSprite();
+            }
+
+            Debug.Log($"Player battle unit loaded: {unitName} - HP:{currentHealth}/{maxHealth}");
+        }
+        else
+        {
+            currentHealth = maxHealth;
+        }
 
         if (spriteRenderer == null)
         {
@@ -47,6 +70,12 @@ public class BattleUnit : MonoBehaviour
         currentHealth -= actualDamage;
         currentHealth = Mathf.Max(currentHealth, 0);
 
+        // Save player health to CharacterManager
+        if (isPlayer && CharacterManager.Instance != null)
+        {
+            CharacterManager.Instance.playerHealth = currentHealth;
+        }
+
         if (spriteRenderer != null)
         {
             StartCoroutine(FlashRed());
@@ -65,15 +94,19 @@ public class BattleUnit : MonoBehaviour
         isDefending = false;
     }
 
-    // ADD THE HEAL METHOD HERE ⬇️
     public void Heal(int amount)
     {
         currentHealth += amount;
-        currentHealth = Mathf.Min(currentHealth, maxHealth);  // Don't exceed max
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+
+        // Save player health to CharacterManager
+        if (isPlayer && CharacterManager.Instance != null)
+        {
+            CharacterManager.Instance.playerHealth = currentHealth;
+        }
 
         Debug.Log($"{unitName} healed {amount} HP! HP: {currentHealth}/{maxHealth}");
     }
-    // ⬆️ HEAL METHOD ENDS HERE
 
     public bool IsDead()
     {
