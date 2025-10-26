@@ -6,63 +6,16 @@ using TMPro;
 
 public class ClassIntroController : MonoBehaviour
 {
-    [System.Serializable]
-    public class CharacterClass
-    {
-        public string className;
-        public string subtitle;
-        public Sprite characterSprite;
-        public Color themeColor;
-        
-        [TextArea(3, 5)]
-        public string background;
-        
-        public Ability[] abilities;
-        
-        public int health;
-        public int damage;
-        public int speed;
-        
-        [Header("Layout")]
-        public bool useFlippedLayout = false;
-    }
-    
-    [System.Serializable]
-    public class Ability
-    {
-        public string abilityName;
-        public string abilityIcon;
-        [TextArea(2, 3)]
-        public string description;
-    }
-    
     [Header("Scene References")]
     public GameObject openingScene;
-    public GameObject character1Scene;
-    public GameObject character2Scene;
+    public GameObject[] characterScenes;
     
     [Header("Opening Scene")]
     public TextMeshProUGUI openingText;
     public TextMeshProUGUI questionText;
     
-    [Header("Character Scenes")]
-    public TextMeshProUGUI characterTitle1;
-    public TextMeshProUGUI characterSubtitle1;
-    public Image characterSpriteImage1;
-    public TextMeshProUGUI backgroundText1;
-    public Transform abilitiesContainer1;
-    public Button continueButton1;
-    public GameObject abilityPrefab;
-    
-    public TextMeshProUGUI characterTitle2;
-    public TextMeshProUGUI characterSubtitle2;
-    public Image characterSpriteImage2;
-    public TextMeshProUGUI backgroundText2;
-    public Transform abilitiesContainer2;
-    public Button continueButton2;
-    
-    [Header("Character Classes")]
-    public CharacterClass[] classes;
+    [Header("Continue Buttons")]
+    public Button[] continueButtons;
     
     [Header("Settings")]
     public float typewriterSpeed = 0.05f;
@@ -78,12 +31,10 @@ public class ClassIntroController : MonoBehaviour
     public string nextSceneName = "FirstMap";
     public GameObject selectionCanvas;
     
-    private int currentClassIndex = -1;
+    private int currentSceneIndex = -1;
     private CanvasGroup openingCanvasGroup;
-    private CanvasGroup character1CanvasGroup;
-    private CanvasGroup character2CanvasGroup;
+    private CanvasGroup[] characterCanvasGroups;
     private bool isTransitioning = false;
-    private bool usingFlippedLayout = false;
     private bool waitingForInput = false;
     
     void Start()
@@ -107,40 +58,33 @@ public class ClassIntroController : MonoBehaviour
         if (openingCanvasGroup == null)
             openingCanvasGroup = openingScene.AddComponent<CanvasGroup>();
         
-        character1CanvasGroup = character1Scene.GetComponent<CanvasGroup>();
-        if (character1CanvasGroup == null)
-            character1CanvasGroup = character1Scene.AddComponent<CanvasGroup>();
-        
-        if (character2Scene != null)
+        characterCanvasGroups = new CanvasGroup[characterScenes.Length];
+        for (int i = 0; i < characterScenes.Length; i++)
         {
-            character2CanvasGroup = character2Scene.GetComponent<CanvasGroup>();
-            if (character2CanvasGroup == null)
-                character2CanvasGroup = character2Scene.AddComponent<CanvasGroup>();
+            if (characterScenes[i] != null)
+            {
+                characterCanvasGroups[i] = characterScenes[i].GetComponent<CanvasGroup>();
+                if (characterCanvasGroups[i] == null)
+                    characterCanvasGroups[i] = characterScenes[i].AddComponent<CanvasGroup>();
+                
+                characterScenes[i].SetActive(false);
+                characterCanvasGroups[i].alpha = 0f;
+            }
         }
         
         openingScene.SetActive(true);
-        character1Scene.SetActive(false);
-        if (character2Scene != null)
-            character2Scene.SetActive(false);
-        
         openingCanvasGroup.alpha = 0f;
-        character1CanvasGroup.alpha = 0f;
-        if (character2CanvasGroup != null)
-            character2CanvasGroup.alpha = 0f;
     }
     
     void SetupButtons()
     {
-        if (continueButton1 != null)
+        for (int i = 0; i < continueButtons.Length; i++)
         {
-            continueButton1.onClick.AddListener(OnContinuePressed);
-            continueButton1.gameObject.SetActive(false);
-        }
-        
-        if (continueButton2 != null)
-        {
-            continueButton2.onClick.AddListener(OnContinuePressed);
-            continueButton2.gameObject.SetActive(false);
+            if (continueButtons[i] != null)
+            {
+                continueButtons[i].onClick.AddListener(OnContinuePressed);
+                continueButtons[i].gameObject.SetActive(false);
+            }
         }
     }
     
@@ -148,27 +92,30 @@ public class ClassIntroController : MonoBehaviour
     {
         yield return ShowOpeningWithFlameText();
         
-        for (int i = 0; i < classes.Length; i++)
+        for (int i = 0; i < characterScenes.Length; i++)
         {
-            yield return TransitionToCharacter(i);
-            
-            waitingForInput = true;
-            ShowContinueButton(true);
-            
-            if (autoAdvance)
+            if (characterScenes[i] != null)
             {
-                yield return new WaitForSeconds(autoAdvanceDelay);
-                waitingForInput = false;
-            }
-            else
-            {
-                while (waitingForInput)
+                yield return TransitionToCharacter(i);
+                
+                waitingForInput = true;
+                ShowContinueButton(i, true);
+                
+                if (autoAdvance)
                 {
-                    yield return null;
+                    yield return new WaitForSeconds(autoAdvanceDelay);
+                    waitingForInput = false;
                 }
+                else
+                {
+                    while (waitingForInput)
+                    {
+                        yield return null;
+                    }
+                }
+                
+                ShowContinueButton(i, false);
             }
-            
-            ShowContinueButton(false);
         }
         
         LoadClassSelection();
@@ -237,12 +184,11 @@ public class ClassIntroController : MonoBehaviour
         textComponent.text = "";
     }
     
-    void ShowContinueButton(bool show)
+    void ShowContinueButton(int sceneIndex, bool show)
     {
-        Button currentButton = usingFlippedLayout ? continueButton2 : continueButton1;
-        if (currentButton != null)
+        if (sceneIndex >= 0 && sceneIndex < continueButtons.Length && continueButtons[sceneIndex] != null)
         {
-            currentButton.gameObject.SetActive(show);
+            continueButtons[sceneIndex].gameObject.SetActive(show);
         }
     }
     
@@ -254,108 +200,28 @@ public class ClassIntroController : MonoBehaviour
         }
     }
     
-    IEnumerator TransitionToCharacter(int classIndex)
+    IEnumerator TransitionToCharacter(int sceneIndex)
     {
         isTransitioning = true;
         
-        if (currentClassIndex == -1)
+        if (currentSceneIndex == -1)
         {
             yield return FadeCanvasGroup(openingCanvasGroup, 1f, 0f, fadeDuration);
             openingScene.SetActive(false);
         }
         else
         {
-            if (usingFlippedLayout && character2CanvasGroup != null)
+            if (currentSceneIndex < characterCanvasGroups.Length && characterCanvasGroups[currentSceneIndex] != null)
             {
-                yield return FadeCanvasGroup(character2CanvasGroup, 1f, 0f, fadeDuration);
-                character2Scene.SetActive(false);
-            }
-            else
-            {
-                yield return FadeCanvasGroup(character1CanvasGroup, 1f, 0f, fadeDuration);
-                character1Scene.SetActive(false);
+                yield return FadeCanvasGroup(characterCanvasGroups[currentSceneIndex], 1f, 0f, fadeDuration);
+                characterScenes[currentSceneIndex].SetActive(false);
             }
         }
         
-        currentClassIndex = classIndex;
-        usingFlippedLayout = classes[classIndex].useFlippedLayout;
-        SetupCharacterDisplay(classes[classIndex], usingFlippedLayout);
+        currentSceneIndex = sceneIndex;
         
-        if (usingFlippedLayout && character2Scene != null)
-        {
-            character2Scene.SetActive(true);
-            yield return FadeCanvasGroup(character2CanvasGroup, 0f, 1f, fadeDuration);
-        }
-        else
-        {
-            character1Scene.SetActive(true);
-            yield return FadeCanvasGroup(character1CanvasGroup, 0f, 1f, fadeDuration);
-        }
-        
-        isTransitioning = false;
-    }
-    
-    void SetupCharacterDisplay(CharacterClass charClass, bool flipped)
-    {
-        TextMeshProUGUI title = flipped ? characterTitle2 : characterTitle1;
-        TextMeshProUGUI subtitle = flipped ? characterSubtitle2 : characterSubtitle1;
-        Image sprite = flipped ? characterSpriteImage2 : characterSpriteImage1;
-        TextMeshProUGUI background = flipped ? backgroundText2 : backgroundText1;
-        Transform abilitiesParent = flipped ? abilitiesContainer2 : abilitiesContainer1;
-        
-        title.text = charClass.className.ToUpper();
-        title.color = charClass.themeColor;
-        subtitle.text = $"\"{charClass.subtitle}\"";
-        
-        sprite.sprite = charClass.characterSprite;
-        sprite.color = Color.white;
-        
-        background.text = charClass.background;
-        
-        foreach (Transform child in abilitiesParent)
-        {
-            Destroy(child.gameObject);
-        }
-        
-        if (abilityPrefab != null)
-        {
-            foreach (Ability ability in charClass.abilities)
-            {
-                GameObject abilityObj = Instantiate(abilityPrefab, abilitiesParent);
-                
-                TextMeshProUGUI abilityName = abilityObj.transform.Find("AbilityName").GetComponent<TextMeshProUGUI>();
-                TextMeshProUGUI abilityDesc = abilityObj.transform.Find("AbilityDescription").GetComponent<TextMeshProUGUI>();
-                
-                if (abilityName != null)
-                {
-                    abilityName.text = $"{ability.abilityIcon} {ability.abilityName}";
-                    abilityName.color = charClass.themeColor;
-                }
-                
-                if (abilityDesc != null)
-                {
-                    abilityDesc.text = ability.description;
-                }
-            }
-        }
-    }
-    
-    IEnumerator SkipToNext()
-    {
-        isTransitioning = true;
-        
-        if (currentClassIndex == -1)
-        {
-            yield return TransitionToCharacter(0);
-        }
-        else if (currentClassIndex < classes.Length - 1)
-        {
-            yield return TransitionToCharacter(currentClassIndex + 1);
-        }
-        else
-        {
-            LoadClassSelection();
-        }
+        characterScenes[sceneIndex].SetActive(true);
+        yield return FadeCanvasGroup(characterCanvasGroups[sceneIndex], 0f, 1f, fadeDuration);
         
         isTransitioning = false;
     }
@@ -383,8 +249,14 @@ public class ClassIntroController : MonoBehaviour
             if (selectionCanvas != null)
             {
                 openingScene.SetActive(false);
-                character1Scene.SetActive(false);
-                character2Scene.SetActive(false);
+                
+                for (int i = 0; i < characterScenes.Length; i++)
+                {
+                    if (characterScenes[i] != null)
+                    {
+                        characterScenes[i].SetActive(false);
+                    }
+                }
                 
                 selectionCanvas.SetActive(true);
             }
