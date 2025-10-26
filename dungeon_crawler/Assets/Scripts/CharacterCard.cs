@@ -1,77 +1,122 @@
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.UI;
+using TMPro;
 
-public class CharacterSelectionManager : MonoBehaviour
+public class CharacterCard : MonoBehaviour
 {
-    public static CharacterSelectionManager Instance;
-
-    [Header("All Character Cards")]
-    public List<CharacterCardSelector> allCards = new List<CharacterCardSelector>();
-
-    private CharacterCardSelector currentlySelectedCard;
-
-    void Awake()
+    [Header("Character Data")]
+    public string characterName = "Fighter";
+    public int characterIndex = 0;
+    public Sprite characterSprite;
+    
+    [Header("UI References")]
+    public Image cardBackground;
+    public Image characterSpriteImage;
+    public TextMeshProUGUI characterNameText;
+    
+    [Header("Visual Settings")]
+    public Color normalColor = new Color(0.12f, 0.12f, 0.16f, 1f);
+    public Color selectedColor = new Color(0.3f, 0.2f, 0.1f, 1f);
+    public Color selectedBorderColor = new Color(1f, 0.84f, 0f, 1f);
+    
+    private bool isSelected = false;
+    private Button button;
+    private Outline outline;
+    
+    void Start()
     {
-        if (Instance == null)
+        button = GetComponent<Button>();
+        if (button == null)
         {
-            Instance = this;
+            button = gameObject.AddComponent<Button>();
+        }
+        
+        button.onClick.AddListener(OnCardClicked);
+        
+        outline = GetComponent<Outline>();
+        if (outline == null)
+        {
+            outline = gameObject.AddComponent<Outline>();
+        }
+        
+        outline.effectColor = selectedBorderColor;
+        outline.effectDistance = new Vector2(4, 4);
+        outline.enabled = false;
+        
+        if (cardBackground == null)
+        {
+            cardBackground = GetComponent<Image>();
+        }
+        
+        if (cardBackground != null)
+        {
+            cardBackground.color = normalColor;
+        }
+        
+        if (characterNameText != null)
+        {
+            characterNameText.text = characterName;
+        }
+        
+        if (characterSpriteImage != null)
+        {
+            characterSpriteImage.sprite = characterSprite;
+        }
+    }
+    
+    void OnCardClicked()
+    {
+        if (!isSelected)
+        {
+            Select();
         }
         else
         {
-            Destroy(gameObject);
+            Deselect();
         }
     }
-
-    void Start()
+    
+    public void Select()
     {
-        // Auto-find all character cards if list is empty
-        if (allCards.Count == 0)
+        isSelected = true;
+        
+        if (cardBackground != null)
         {
-            allCards.AddRange(FindObjectsByType<CharacterCardSelector>(FindObjectsSortMode.None));
+            cardBackground.color = selectedColor;
         }
-
-        // Optionally select a default card (e.g., Knight)
-        SelectDefaultCard();
-    }
-
-    public void SelectCard(CharacterCardSelector cardToSelect)
-    {
-        // Deselect all other cards
-        foreach (CharacterCardSelector card in allCards)
+        
+        if (outline != null)
         {
-            card.SetSelected(false);
+            outline.enabled = true;
         }
-
-        // Select the clicked card
-        cardToSelect.SetSelected(true);
-        currentlySelectedCard = cardToSelect;
-
-        Debug.Log("Selected character: " + cardToSelect.characterClass);
-    }
-
-    void SelectDefaultCard()
-    {
-        // Find and select the Knight card by default
-        CharacterCardSelector defaultCard = allCards.Find(card => card.characterClass.ToLower() == "knight");
-
-        if (defaultCard != null)
+        
+        transform.localScale = Vector3.one * 1.05f;
+        
+        if (CharacterSelectionManager.Instance != null)
         {
-            SelectCard(defaultCard);
+            CharacterSelectionManager.Instance.OnCharacterSelected(this);
         }
-        else if (allCards.Count > 0)
+    }
+    
+    public void Deselect()
+    {
+        isSelected = false;
+        
+        if (cardBackground != null)
         {
-            // If Knight not found, select first card
-            SelectCard(allCards[0]);
+            cardBackground.color = normalColor;
         }
-    }
-
-    public CharacterCardSelector GetSelectedCard()
-    {
-        return currentlySelectedCard;
-    }
-
-    public bool HasSelectedCard()
-    {
-        return currentlySelectedCard != null;
+        
+        if (outline != null)
+        {
+            outline.enabled = false;
+        }
+        
+        transform.localScale = Vector3.one;
+        
+        if (CharacterSelectionManager.Instance != null)
+        {
+            CharacterSelectionManager.Instance.OnCharacterDeselected(this);
+        }
     }
 }

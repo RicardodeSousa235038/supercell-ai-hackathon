@@ -51,7 +51,7 @@ public class ClassIntroController : MonoBehaviour
     public Image characterSpriteImage1;
     public TextMeshProUGUI backgroundText1;
     public Transform abilitiesContainer1;
-    public Button continueButton1; // NEW! Continue button for character1
+    public Button continueButton1;
     public GameObject abilityPrefab;
     
     public TextMeshProUGUI characterTitle2;
@@ -59,7 +59,7 @@ public class ClassIntroController : MonoBehaviour
     public Image characterSpriteImage2;
     public TextMeshProUGUI backgroundText2;
     public Transform abilitiesContainer2;
-    public Button continueButton2; // NEW! Continue button for character2
+    public Button continueButton2;
     
     [Header("Character Classes")]
     public CharacterClass[] classes;
@@ -67,12 +67,16 @@ public class ClassIntroController : MonoBehaviour
     [Header("Settings")]
     public float typewriterSpeed = 0.05f;
     public float fadeDuration = 1f;
-    public Color flameColor1 = new Color(1f, 0.3f, 0f, 1f); // Orange
-    public Color flameColor2 = new Color(0.8f, 0.1f, 0f, 1f); // Dark red-orange
-    public bool autoAdvance = false; // Set to false for manual control
-    public float autoAdvanceDelay = 4f; // Only used if autoAdvance is true
+    public Color flameColor1 = new Color(1f, 0.3f, 0f, 1f);
+    public Color flameColor2 = new Color(0.8f, 0.1f, 0f, 1f);
+    public bool autoAdvance = false;
+    public float autoAdvanceDelay = 4f;
     public KeyCode skipKey = KeyCode.Space;
+    
+    [Header("Scene Transition")]
+    public bool useSceneTransition = false;
     public string nextSceneName = "FirstMap";
+    public GameObject selectionCanvas;
     
     private int currentClassIndex = -1;
     private CanvasGroup openingCanvasGroup;
@@ -148,7 +152,6 @@ public class ClassIntroController : MonoBehaviour
         {
             yield return TransitionToCharacter(i);
             
-            // Wait for button press or auto-advance
             waitingForInput = true;
             ShowContinueButton(true);
             
@@ -159,7 +162,6 @@ public class ClassIntroController : MonoBehaviour
             }
             else
             {
-                // Wait until player presses continue
                 while (waitingForInput)
                 {
                     yield return null;
@@ -172,13 +174,11 @@ public class ClassIntroController : MonoBehaviour
         LoadClassSelection();
     }
     
-    // NEW! Flame-colored text that appears slowly
     IEnumerator ShowOpeningWithFlameText()
     {
         isTransitioning = true;
         openingScene.SetActive(true);
         
-        // Clear both texts at start
         string openingFullText = openingText.text;
         string questionFullText = questionText.text;
         openingText.text = "";
@@ -186,28 +186,19 @@ public class ClassIntroController : MonoBehaviour
         
         yield return FadeCanvasGroup(openingCanvasGroup, 0f, 1f, fadeDuration);
         
-        // First text appears letter-by-letter in flame colors
         yield return FlameTypewriter(openingText, openingFullText, typewriterSpeed);
-        
-        // Small pause to read
         yield return new WaitForSeconds(0.5f);
-        
-        // First text fades out completely
         yield return FadeOutText(openingText, 1f);
-        
-        // THEN question appears letter-by-letter
         yield return FlameTypewriter(questionText, questionFullText, typewriterSpeed);
         
         isTransitioning = false;
     }
     
-    // NEW! Typewriter with flame color pulsing
     IEnumerator FlameTypewriter(TextMeshProUGUI textComponent, string fullText, float delay)
     {
         textComponent.text = "";
-        textComponent.color = flameColor1; // Start with flame color
+        textComponent.color = flameColor1;
         
-        // Continuously pulse the color while typing
         Coroutine pulseCoroutine = StartCoroutine(ContinuousPulse(textComponent));
         
         foreach (char c in fullText)
@@ -216,11 +207,9 @@ public class ClassIntroController : MonoBehaviour
             yield return new WaitForSeconds(delay);
         }
         
-        // Stop pulsing
         StopCoroutine(pulseCoroutine);
     }
     
-    // NEW! Continuous color pulsing between orange and red
     IEnumerator ContinuousPulse(TextMeshProUGUI textComponent)
     {
         while (true)
@@ -231,7 +220,6 @@ public class ClassIntroController : MonoBehaviour
         }
     }
     
-    // NEW! Fade out text completely
     IEnumerator FadeOutText(TextMeshProUGUI textComponent, float duration)
     {
         Color startColor = textComponent.color;
@@ -245,7 +233,6 @@ public class ClassIntroController : MonoBehaviour
             yield return null;
         }
         
-        // Fully hide
         textComponent.color = endColor;
         textComponent.text = "";
     }
@@ -387,6 +374,25 @@ public class ClassIntroController : MonoBehaviour
     
     void LoadClassSelection()
     {
-        SceneManager.LoadScene(nextSceneName);
+        if (useSceneTransition)
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
+        else
+        {
+            if (selectionCanvas != null)
+            {
+                openingScene.SetActive(false);
+                character1Scene.SetActive(false);
+                character2Scene.SetActive(false);
+                
+                selectionCanvas.SetActive(true);
+            }
+            else
+            {
+                Debug.LogWarning("Selection Canvas not assigned!");
+                SceneManager.LoadScene(nextSceneName);
+            }
+        }
     }
 }

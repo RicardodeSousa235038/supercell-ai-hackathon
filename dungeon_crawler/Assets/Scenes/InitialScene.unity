@@ -1237,7 +1237,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 758919438}
+      - m_Target: {fileID: 758919440}
         m_TargetAssemblyTypeName: CharacterSelectionManager, Assembly-CSharp
         m_MethodName: OnStartButtonPressed
         m_Mode: 1
@@ -1482,11 +1482,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterName: Vampire
-  characterIndex: 5
-  characterSprite: {fileID: -8220416643034396823, guid: 2701b8cd6eed4234797cb73bc69bd443, type: 3}
-  cardBackground: {fileID: 509231072}
-  characterSpriteImage: {fileID: 795263525}
-  characterNameText: {fileID: 1335012453}
+  characterIndex: 4
+  characterSprite: {fileID: 0}
+  cardBackground: {fileID: 0}
+  characterSpriteImage: {fileID: 0}
+  characterNameText: {fileID: 0}
   normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
   selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
   selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
@@ -1718,11 +1718,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterName: Beast
-  characterIndex: 4
-  characterSprite: {fileID: -2941990513877699459, guid: d2d89bdd93948a742bb4ad087298da5f, type: 3}
-  cardBackground: {fileID: 510773038}
-  characterSpriteImage: {fileID: 1562369192}
-  characterNameText: {fileID: 1156671939}
+  characterIndex: 3
+  characterSprite: {fileID: 0}
+  cardBackground: {fileID: 0}
+  characterSpriteImage: {fileID: 0}
+  characterNameText: {fileID: 0}
   normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
   selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
   selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
@@ -2364,10 +2364,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterName: Fighter
   characterIndex: 0
-  characterSprite: {fileID: -3243221708704459772, guid: 3c3888c71dcc9a64880b705bb4782ec5, type: 3}
-  cardBackground: {fileID: 735828308}
-  characterSpriteImage: {fileID: 826940360}
-  characterNameText: {fileID: 1128462597}
+  characterSprite: {fileID: 0}
+  cardBackground: {fileID: 0}
+  characterSpriteImage: {fileID: 0}
+  characterNameText: {fileID: 0}
   normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
   selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
   selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
@@ -2493,7 +2493,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 758919439}
-  - component: {fileID: 758919438}
+  - component: {fileID: 758919440}
   m_Layer: 0
   m_Name: SelectionManager
   m_TagString: Untagged
@@ -2501,22 +2501,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &758919438
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 758919437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 756ea348882e477459d70927a09fdf15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterSelectionManager
-  selectionPanel: {fileID: 2131081160}
-  startButton: {fileID: 347412976}
-  feedbackText: {fileID: 1120056611}
-  nextSceneName: MainMenu
 --- !u!4 &758919439
 Transform:
   m_ObjectHideFlags: 0
@@ -2532,6 +2516,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &758919440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 758919437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa24d8539c96d174bbf87f98a6edf848, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterSelectionManager
+  selectionPanel: {fileID: 2131081160}
+  startButton: {fileID: 347412976}
+  feedbackText: {fileID: 1120056611}
+  nextSceneName: Map
 --- !u!1 &784754541
 GameObject:
   m_ObjectHideFlags: 0
@@ -4811,7 +4811,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1306631544}
-  - component: {fileID: 1306631543}
+  - component: {fileID: 1306631545}
   m_Layer: 0
   m_Name: IntroController
   m_TagString: Untagged
@@ -4819,7 +4819,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1306631543
+--- !u!4 &1306631544
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1306631542}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1500.8413, y: 697.869, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1306631545
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4828,7 +4843,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1306631542}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b92be8a91902008488f0c9a9d6464659, type: 3}
+  m_Script: {fileID: 11500000, guid: 97f49b79c8fe5204a8cc024f248065b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClassIntroController
   openingScene: {fileID: 685621314}
@@ -4853,15 +4868,12 @@ MonoBehaviour:
   - className: Fighter
     subtitle: Steel and determination forged in battle
     characterSprite: {fileID: -3243221708704459772, guid: 3c3888c71dcc9a64880b705bb4782ec5, type: 3}
-    themeColor: {r: 1, g: 1, b: 1, a: 0}
-    background: '"A veteran of countless battles, the Fighter has trained their body
-      to withstand punishment that would fell lesser adventurers. Their armor bears
-      the scars of survival, and their blade has tasted victory against impossible
-      odds."'
+    themeColor: {r: 0.6603774, g: 0.30111542, b: 0.30111542, a: 0}
+    background: '"A veteran of countless battles..."'
     abilities:
     - abilityName: Iron Defense
       abilityIcon: "\U0001F6E1\uFE0F"
-      description: Reduces incoming damage by 30% for 5 seconds
+      description: '"Reduces incoming damage by 30%"'
     health: 100
     damage: 15
     speed: 2
@@ -4870,18 +4882,15 @@ MonoBehaviour:
     subtitle: Honor and valor guide the blade
     characterSprite: {fileID: -5650937905414234860, guid: fd4f966f9c078cb49961e8eb02fd335b, type: 3}
     themeColor: {r: 1, g: 1, b: 1, a: 0}
-    background: '"Sworn to uphold justice and protect the innocent, the Knight is
-      a beacon of hope in the darkness. Clad in gleaming armor and wielding sacred
-      steel, they face evil without fear. Their oath binds them to defend those who
-      cannot defend themselves."'
+    background: '"Sworn to uphold justice..."'
     abilities:
     - abilityName: Holy Shield
       abilityIcon: "\U0001F6E1\uFE0F"
-      description: Creates a protective barrier that blocks all damage for 3 seconds
+      description: '"Blocks all damage for 3 seconds"'
     health: 90
     damage: 18
     speed: 2
-    useFlippedLayout: 0
+    useFlippedLayout: 1
   typewriterSpeed: 0.05
   fadeDuration: 1
   flameColor1: {r: 1, g: 0.3, b: 0, a: 1}
@@ -4890,23 +4899,8 @@ MonoBehaviour:
   autoAdvanceDelay: 4
   skipKey: 32
   useSceneTransition: 0
-  nextSceneName: MainMenu
+  nextSceneName: Map
   selectionCanvas: {fileID: 1253807535}
---- !u!4 &1306631544
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1306631542}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1500.8413, y: 697.869, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1335012451
 GameObject:
   m_ObjectHideFlags: 0
@@ -5489,11 +5483,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterName: Archer
-  characterIndex: 6
-  characterSprite: {fileID: -3177238883722149357, guid: 177f23cb5b213e14294adc35b7f86c1d, type: 3}
-  cardBackground: {fileID: 1383220306}
-  characterSpriteImage: {fileID: 332294995}
-  characterNameText: {fileID: 784754543}
+  characterIndex: 5
+  characterSprite: {fileID: 0}
+  cardBackground: {fileID: 0}
+  characterSpriteImage: {fileID: 0}
+  characterNameText: {fileID: 0}
   normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
   selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
   selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
@@ -6095,10 +6089,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterName: Knight
   characterIndex: 1
-  characterSprite: {fileID: -5650937905414234860, guid: fd4f966f9c078cb49961e8eb02fd335b, type: 3}
-  cardBackground: {fileID: 1534737031}
-  characterSpriteImage: {fileID: 222296255}
-  characterNameText: {fileID: 1063581842}
+  characterSprite: {fileID: 0}
+  cardBackground: {fileID: 0}
+  characterSpriteImage: {fileID: 0}
+  characterNameText: {fileID: 0}
   normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
   selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
   selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
@@ -6628,10 +6622,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterName: Thief
   characterIndex: 2
-  characterSprite: {fileID: -8051105487168061783, guid: 18e4a9e7d5536264ebaeb123e21874d1, type: 3}
-  cardBackground: {fileID: 1718486333}
-  characterSpriteImage: {fileID: 1926760001}
-  characterNameText: {fileID: 1367411271}
+  characterSprite: {fileID: 0}
+  cardBackground: {fileID: 0}
+  characterSpriteImage: {fileID: 0}
+  characterNameText: {fileID: 0}
   normalColor: {r: 0.12, g: 0.12, b: 0.16, a: 1}
   selectedColor: {r: 0.3, g: 0.2, b: 0.1, a: 1}
   selectedBorderColor: {r: 1, g: 0.84, b: 0, a: 1}
