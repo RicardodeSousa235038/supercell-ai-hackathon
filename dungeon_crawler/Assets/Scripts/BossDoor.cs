@@ -109,9 +109,9 @@ public class BossDoor : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         // Step 4: Spawn the 3 Hydras
-        if (HydraBattleManager.Instance != null)
-        {
-            HydraBattleManager.Instance.StartHydraBattle(3);
-        }
+        //if (HydraBattleManager.Instance != null)
+        //{
+         //   HydraBattleManager.Instance.StartHydraBattle(3);
+        //}
     }
 }

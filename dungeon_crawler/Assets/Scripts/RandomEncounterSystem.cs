@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class RandomEncounterSystem : MonoBehaviour
@@ -11,8 +11,8 @@ public class RandomEncounterSystem : MonoBehaviour
     [Header("Requirements")]
     public float minDistanceToTrigger = 1f;
 
-    [Header("Enemy Setup")]
-    public GameObject[] possibleEnemies;
+    [Header("BATTLE Enemy Setup (Must have BattleUnit component!)")]
+    public GameObject[] battleEnemyPrefabs; // These must have BattleUnit components!
     public int minEnemies = 1;
     public int maxEnemies = 3;
 
@@ -25,14 +25,45 @@ public class RandomEncounterSystem : MonoBehaviour
     {
         player = transform;
         lastPosition = player.position;
+
+        // Validate enemy prefabs on start
+        ValidateEnemyPrefabs();
+    }
+
+    void ValidateEnemyPrefabs()
+    {
+        if (battleEnemyPrefabs == null || battleEnemyPrefabs.Length == 0)
+        {
+            Debug.LogError($"[{gameObject.name}] No battle enemy prefabs assigned!");
+            return;
+        }
+
+        foreach (GameObject enemy in battleEnemyPrefabs)
+        {
+            if (enemy == null)
+            {
+                Debug.LogError($"[{gameObject.name}] Null enemy in battleEnemyPrefabs array!");
+                continue;
+            }
+
+            BattleUnit unit = enemy.GetComponent<BattleUnit>();
+            if (unit == null)
+            {
+                Debug.LogError($"[{gameObject.name}] Enemy '{enemy.name}' is missing BattleUnit component!");
+            }
+            else
+            {
+                Debug.Log($"[{gameObject.name}] Enemy '{enemy.name}' validated - HP:{unit.maxHealth}, ATK:{unit.attackPower}");
+            }
+        }
     }
 
     void Update()
     {
-        // CRITICAL: Check if GameStateManager exists FIRST!
+        // Check if GameStateManager exists
         if (GameStateManager.Instance == null)
         {
-            return; // Exit immediately if no GameStateManager
+            return;
         }
 
         // Don't check during battles
@@ -70,19 +101,27 @@ public class RandomEncounterSystem : MonoBehaviour
 
         if (roll <= encounterChance)
         {
-            Debug.Log($"Random encounter! (Rolled {roll}, needed {encounterChance})");
+            Debug.Log($"🎲 Random encounter! (Rolled {roll}, needed ≤{encounterChance})");
             TriggerEncounter();
         }
     }
 
     void TriggerEncounter()
     {
+        if (battleEnemyPrefabs == null || battleEnemyPrefabs.Length == 0)
+        {
+            Debug.LogError("Cannot start battle - no enemy prefabs assigned!");
+            return;
+        }
+
         encounterActive = true;
         StartCoroutine(StartBattle());
     }
 
     IEnumerator StartBattle()
     {
+        Debug.Log("⚔️ Battle sequence starting...");
+
         // Freeze player
         MonoBehaviour[] playerScripts = GetComponents<MonoBehaviour>();
         foreach (MonoBehaviour script in playerScripts)
@@ -93,27 +132,33 @@ public class RandomEncounterSystem : MonoBehaviour
             }
         }
 
-        Debug.Log("Battle starting!");
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
 
-        // Switch to battle
+        // Switch to battle state FIRST
         if (GameStateManager.Instance != null)
         {
             GameStateManager.Instance.SwitchState(GameStateManager.GameState.Battle);
         }
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.5f);
 
-        // Spawn random enemies
+        // NOW spawn enemies
         if (BattleManager.Instance != null)
         {
             int enemyCount = Random.Range(minEnemies, maxEnemies + 1);
-            BattleManager.Instance.StartRandomBattle(possibleEnemies, enemyCount);
+            Debug.Log($"📡 Calling BattleManager with {enemyCount} enemies");
+            BattleManager.Instance.StartRandomBattle(battleEnemyPrefabs, enemyCount);
+        }
+        else
+        {
+            Debug.LogError("BattleManager.Instance is NULL!");
         }
     }
 
+    // This method is called by BattleManager when battle ends
     public void OnBattleEnd()
     {
+        Debug.Log("🏁 Battle ended, re-enabling player");
         encounterActive = false;
 
         // Re-enable player scripts

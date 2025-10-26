@@ -1,8 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
 
 public class CharacterManager : MonoBehaviour
 {
     public static CharacterManager Instance;
+
+    private bool hasInitialized = false;
 
     [Header("Available Character Sprites")]
     public Sprite fighter;      // Index 0
@@ -13,8 +16,8 @@ public class CharacterManager : MonoBehaviour
     public Sprite archer;       // Index 5
 
     [Header("Currently Selected Character")]
-    public string selectedCharacterClass = "Fighter";
-    public int selectedCharacterIndex = 0;
+    public string selectedCharacterClass = "";
+    public int selectedCharacterIndex = -1;
 
     [Header("Character Stats")]
     public int playerHealth = 100;
@@ -25,6 +28,12 @@ public class CharacterManager : MonoBehaviour
 
     void Awake()
     {
+        // FORCE reset to prevent Inspector values from interfering
+        selectedCharacterIndex = -1;
+        selectedCharacterClass = "";
+
+        Debug.Log($"=== CharacterManager Awake START === Index: {selectedCharacterIndex}, Class: {selectedCharacterClass}");
+
         if (Instance == null)
         {
             Instance = this;
@@ -35,17 +44,74 @@ public class CharacterManager : MonoBehaviour
         {
             Destroy(gameObject);
             Debug.Log("Duplicate CharacterManager destroyed");
+            return;
         }
+
+        Debug.Log($"=== CharacterManager Awake END === Index: {selectedCharacterIndex}, Class: {selectedCharacterClass}");
     }
 
     void Start()
     {
-        LoadSavedCharacter();
+        Debug.Log($"=== CharacterManager Start BEGIN === Index: {selectedCharacterIndex}, Class: {selectedCharacterClass}, hasInitialized: {hasInitialized}");
+
+        if (!hasInitialized)
+        {
+            Debug.Log("First initialization - about to load saved character...");
+            LoadSavedCharacter();
+            hasInitialized = true;
+            Debug.Log($"After LoadSavedCharacter - Index: {selectedCharacterIndex}, Class: {selectedCharacterClass}");
+        }
+        else
+        {
+            Debug.Log("Already initialized - skipping LoadSavedCharacter");
+        }
+
+        Debug.Log($"=== CharacterManager Start END === Index: {selectedCharacterIndex}, Class: {selectedCharacterClass}");
+
+        // Tell all ApplyCharacterSkin scripts to apply now
+        StartCoroutine(NotifySkinsToApply());
     }
 
-    // Call this when player selects a character
+    IEnumerator NotifySkinsToApply()
+    {
+        yield return null; // Wait one frame
+
+        Debug.Log("Broadcasting to all ApplyCharacterSkin scripts...");
+        ApplyCharacterSkin[] skins = FindObjectsByType<ApplyCharacterSkin>(FindObjectsSortMode.None);
+        foreach (var skin in skins)
+        {
+            skin.ApplySkin();
+        }
+    }
+
+    void Update()
+    {
+        // Press 'P' to print what's in PlayerPrefs
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.Log("=== PLAYERPREFS DEBUG ===");
+            Debug.Log($"Saved Index: {PlayerPrefs.GetInt("SelectedCharacterIndex", -999)}");
+            Debug.Log($"Saved Class: {PlayerPrefs.GetString("SelectedCharacter", "NONE")}");
+            Debug.Log($"Current Index: {selectedCharacterIndex}");
+            Debug.Log($"Current Class: {selectedCharacterClass}");
+        }
+
+        // Press 'R' to force refresh the sprite
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Debug.Log("Force refreshing all player sprites...");
+            ApplyCharacterSkin[] skinAppliers = FindObjectsByType<ApplyCharacterSkin>(FindObjectsSortMode.None);
+            foreach (var applier in skinAppliers)
+            {
+                applier.ApplySkin();
+            }
+        }
+    }
+
     public void SelectCharacter(int characterIndex)
     {
+        Debug.Log($"=== SelectCharacter CALLED === Changing from Index {selectedCharacterIndex} to {characterIndex}");
+
         selectedCharacterIndex = characterIndex;
 
         switch (characterIndex)
@@ -80,11 +146,12 @@ public class CharacterManager : MonoBehaviour
         }
 
         SaveCharacterSelection();
-        Debug.Log($"Character selected: Index {characterIndex} = {selectedCharacterClass}");
+        Debug.Log($"=== SelectCharacter COMPLETE === Index {characterIndex} = {selectedCharacterClass}");
     }
 
     void ApplyCharacterStats(string className, int health, int damage, int speed, int defense)
     {
+        Debug.Log($"ApplyCharacterStats called: {className}");
         selectedCharacterClass = className;
         playerMaxHealth = health;
         playerHealth = health;
@@ -95,23 +162,34 @@ public class CharacterManager : MonoBehaviour
 
     public Sprite GetSelectedCharacterSprite()
     {
-        Debug.Log($"Getting sprite for index {selectedCharacterIndex}");
+        Debug.Log($"GetSelectedCharacterSprite called - Index: {selectedCharacterIndex}, Class: {selectedCharacterClass}");
 
         switch (selectedCharacterIndex)
         {
-            case 0: return fighter;
-            case 1: return knight;
-            case 2: return thief;
-            case 3: return beastClass;
-            case 4: return vampire;
-            case 5: return archer;
+            case 0:
+                Debug.Log("Returning fighter sprite");
+                return fighter;
+            case 1:
+                Debug.Log("Returning knight sprite");
+                return knight;
+            case 2:
+                Debug.Log("Returning thief sprite");
+                return thief;
+            case 3:
+                Debug.Log("Returning beastClass sprite");
+                return beastClass;
+            case 4:
+                Debug.Log("Returning vampire sprite");
+                return vampire;
+            case 5:
+                Debug.Log("Returning archer sprite");
+                return archer;
             default:
                 Debug.LogWarning($"Unknown character index: {selectedCharacterIndex}, returning fighter");
                 return fighter;
         }
     }
 
-    // Save character selection
     public void SaveCharacterSelection()
     {
         PlayerPrefs.SetInt("SelectedCharacterIndex", selectedCharacterIndex);
@@ -123,31 +201,45 @@ public class CharacterManager : MonoBehaviour
         PlayerPrefs.SetInt("PlayerDefense", playerDefense);
         PlayerPrefs.Save();
 
-        Debug.Log($"Saved character: {selectedCharacterClass} (Index: {selectedCharacterIndex})");
+        Debug.Log($"💾 SAVED to PlayerPrefs: {selectedCharacterClass} (Index: {selectedCharacterIndex})");
     }
 
-    // Load saved character
     void LoadSavedCharacter()
     {
+        Debug.Log("=== LoadSavedCharacter START ===");
+
         if (PlayerPrefs.HasKey("SelectedCharacterIndex"))
         {
-            selectedCharacterIndex = PlayerPrefs.GetInt("SelectedCharacterIndex", 0);
-            selectedCharacterClass = PlayerPrefs.GetString("SelectedCharacter", "Fighter");
+            int loadedIndex = PlayerPrefs.GetInt("SelectedCharacterIndex", 0);
+            string loadedClass = PlayerPrefs.GetString("SelectedCharacter", "Fighter");
+
+            Debug.Log($"Found saved data in PlayerPrefs - Index: {loadedIndex}, Class: {loadedClass}");
+
+            selectedCharacterIndex = loadedIndex;
+            selectedCharacterClass = loadedClass;
             playerMaxHealth = PlayerPrefs.GetInt("PlayerMaxHealth", 100);
             playerHealth = PlayerPrefs.GetInt("PlayerHealth", 100);
             playerDamage = PlayerPrefs.GetInt("PlayerDamage", 15);
             playerSpeed = PlayerPrefs.GetInt("PlayerSpeed", 2);
             playerDefense = PlayerPrefs.GetInt("PlayerDefense", 5);
 
-            Debug.Log($"Loaded saved character: {selectedCharacterClass} (Index: {selectedCharacterIndex})");
+            Debug.Log($"✅ Loaded saved character: {selectedCharacterClass} (Index: {selectedCharacterIndex})");
         }
         else
         {
-            Debug.Log("No saved character found, using default (Fighter)");
+            Debug.Log("⚠️ No saved character found, defaulting to Fighter");
+            selectedCharacterIndex = 0;
+            selectedCharacterClass = "Fighter";
+            playerMaxHealth = 100;
+            playerHealth = 100;
+            playerDamage = 15;
+            playerSpeed = 2;
+            playerDefense = 5;
         }
+
+        Debug.Log("=== LoadSavedCharacter END ===");
     }
 
-    // Useful methods for gameplay
     public void TakeDamage(int damage)
     {
         int actualDamage = Mathf.Max(damage - playerDefense, 0);

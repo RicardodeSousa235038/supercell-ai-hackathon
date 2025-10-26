@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -24,7 +24,7 @@ public class BattleManager : MonoBehaviour
     private BattleUnit playerUnit;
     private BattleUnit currentEnemyTarget;
     private bool battleActive = false;
-    private GameStateManager.GameState returnState;  // Remember where to return after battle
+    private GameStateManager.GameState returnState;
 
     void Awake()
     {
@@ -46,15 +46,72 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        // Press B to manually test battle
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            Debug.Log("🔧 DEBUG: Manual battle trigger");
+
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                RandomEncounterSystem encounters = player.GetComponent<RandomEncounterSystem>();
+                if (encounters != null && encounters.battleEnemyPrefabs != null && encounters.battleEnemyPrefabs.Length > 0)
+                {
+                    Debug.Log($"✅ Found {encounters.battleEnemyPrefabs.Length} enemy prefabs, starting battle");
+                    StartRandomBattle(encounters.battleEnemyPrefabs, 2);
+                }
+                else
+                {
+                    Debug.LogError("❌ Player has no RandomEncounterSystem or no enemies assigned!");
+                }
+            }
+            else
+            {
+                Debug.LogError("❌ No player found with 'Player' tag!");
+            }
+        }
+    }
+
     public void StartRandomBattle(GameObject[] possibleEnemies, int enemyCount)
     {
-        if (battleActive) return;
+        Debug.Log($"🎮 StartRandomBattle called - Enemies: {enemyCount}, Active: {battleActive}");
+
+        if (battleActive)
+        {
+            Debug.LogWarning("Battle already active!");
+            return;
+        }
+
+        if (possibleEnemies == null || possibleEnemies.Length == 0)
+        {
+            Debug.LogError("❌ No enemies provided!");
+            return;
+        }
+
+        if (playerBattlePrefab == null)
+        {
+            Debug.LogError("❌ Player battle prefab not assigned in BattleManager!");
+            return;
+        }
+
+        if (battleUI == null)
+        {
+            Debug.LogError("❌ Battle UI not assigned in BattleManager!");
+            return;
+        }
+
+        if (enemySpawnPositions == null || enemySpawnPositions.Length == 0)
+        {
+            Debug.LogError("❌ No enemy spawn positions assigned in BattleManager!");
+            return;
+        }
+
+        Debug.Log($"✅ All validations passed, starting battle setup");
 
         battleActive = true;
-
-        // Remember which state to return to
         returnState = GameStateManager.Instance.GetCurrentState();
-
         StartCoroutine(SetupBattle(possibleEnemies, enemyCount));
     }
 
@@ -63,11 +120,8 @@ public class BattleManager : MonoBehaviour
         if (battleActive) return;
 
         battleActive = true;
-
-        // For boss battles, return to dungeon 3
         returnState = GameStateManager.GameState.Dungeon3;
 
-        // Create array with just hydras
         GameObject[] hydras = new GameObject[hydraCount];
         for (int i = 0; i < hydraCount; i++)
         {
@@ -79,12 +133,24 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator SetupBattle(GameObject[] possibleEnemies, int enemyCount)
     {
+        Debug.Log($"🔧 SetupBattle starting - Will spawn {enemyCount} enemies from {possibleEnemies.Length} possible types");
+
         // Spawn player
         if (playerBattlePrefab != null && playerBattlePosition != null)
         {
+            Debug.Log("👤 Spawning player...");
             playerBattleInstance = Instantiate(playerBattlePrefab, playerBattlePosition.position, Quaternion.identity);
             playerBattleInstance.transform.SetParent(transform);
             playerUnit = playerBattleInstance.GetComponent<BattleUnit>();
+
+            if (playerUnit == null)
+            {
+                Debug.LogError("❌ Player battle instance has no BattleUnit component!");
+            }
+            else
+            {
+                Debug.Log($"✅ Player spawned - HP: {playerUnit.currentHealth}/{playerUnit.maxHealth}");
+            }
         }
 
         // Spawn enemies
@@ -93,24 +159,57 @@ public class BattleManager : MonoBehaviour
             if (possibleEnemies.Length > 0)
             {
                 GameObject enemyPrefab = possibleEnemies[Random.Range(0, possibleEnemies.Length)];
+
+                if (enemyPrefab == null)
+                {
+                    Debug.LogError($"❌ Enemy prefab at index is null!");
+                    continue;
+                }
+
+                Debug.Log($"👹 Spawning enemy {i + 1}: {enemyPrefab.name}");
                 GameObject enemy = Instantiate(enemyPrefab, enemySpawnPositions[i].position, Quaternion.identity);
                 enemy.transform.SetParent(transform);
                 activeEnemies.Add(enemy);
+
+                BattleUnit enemyUnit = enemy.GetComponent<BattleUnit>();
+                if (enemyUnit == null)
+                {
+                    Debug.LogError($"❌ Enemy '{enemy.name}' has no BattleUnit component!");
+                }
+                else
+                {
+                    Debug.Log($"✅ Enemy spawned - {enemyUnit.unitName} HP: {enemyUnit.currentHealth}");
+                }
 
                 yield return new WaitForSeconds(0.3f);
             }
         }
 
+        Debug.Log($"✅ Battle setup complete - {activeEnemies.Count} enemies spawned");
+
         // Show battle UI
         if (battleUI != null)
         {
             battleUI.SetActive(true);
+            Debug.Log("✅ Battle UI enabled!");
+        }
+        else
+        {
+            Debug.LogError("❌ Battle UI is null!");
         }
 
         // Set first target
         if (activeEnemies.Count > 0)
         {
             currentEnemyTarget = activeEnemies[0].GetComponent<BattleUnit>();
+            if (currentEnemyTarget != null)
+            {
+                Debug.Log($"🎯 Target set to: {currentEnemyTarget.unitName}");
+            }
+        }
+        else
+        {
+            Debug.LogError("❌ No enemies spawned!");
         }
 
         UpdateUI();
@@ -152,7 +251,6 @@ public class BattleManager : MonoBehaviour
     {
         if (!battleActive || playerUnit == null) return;
 
-        // Simple heal for now (you can expand this)
         int healAmount = 30;
         playerUnit.Heal(healAmount);
         AddBattleLog($"You healed {healAmount} HP!");
@@ -168,7 +266,7 @@ public class BattleManager : MonoBehaviour
         if (fleeChance > 50f)
         {
             AddBattleLog("You escaped!");
-            StartCoroutine(EndBattle(true, true));  // Won = true, fled = true
+            StartCoroutine(EndBattle(true, true));
         }
         else
         {
@@ -181,7 +279,6 @@ public class BattleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
 
-        // All enemies attack
         foreach (GameObject enemyObj in activeEnemies)
         {
             BattleUnit enemy = enemyObj.GetComponent<BattleUnit>();
@@ -203,7 +300,6 @@ public class BattleManager : MonoBehaviour
             }
         }
 
-        // Reset player defense
         playerUnit.ResetDefense();
     }
 
@@ -220,11 +316,10 @@ public class BattleManager : MonoBehaviour
         {
             AddBattleLog("Victory!");
             yield return new WaitForSeconds(1.5f);
-            StartCoroutine(EndBattle(true, false));  // Won = true, fled = false
+            StartCoroutine(EndBattle(true, false));
         }
         else
         {
-            // Target next enemy
             currentEnemyTarget = activeEnemies[0].GetComponent<BattleUnit>();
             UpdateUI();
         }
@@ -235,14 +330,13 @@ public class BattleManager : MonoBehaviour
         AddBattleLog("You were defeated!");
         yield return new WaitForSeconds(2f);
 
-        StartCoroutine(EndBattle(false, false));  // Won = false, fled = false
+        StartCoroutine(EndBattle(false, false));
     }
 
     IEnumerator EndBattle(bool playerWon, bool fled)
     {
         battleActive = false;
 
-        // Clean up
         if (playerBattleInstance != null)
         {
             Destroy(playerBattleInstance);
@@ -261,10 +355,8 @@ public class BattleManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        // Return to previous state
         GameStateManager.Instance.SwitchState(returnState);
 
-        // Notify random encounter system
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -295,7 +387,6 @@ public class BattleManager : MonoBehaviour
         {
             battleLogText.text = message + "\n" + battleLogText.text;
 
-            // Keep only last 5 messages
             string[] lines = battleLogText.text.Split('\n');
             if (lines.Length > 5)
             {
