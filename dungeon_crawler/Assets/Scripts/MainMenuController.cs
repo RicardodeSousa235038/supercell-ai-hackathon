@@ -7,7 +7,7 @@ public class MainMenuController : MonoBehaviour
     public void PlayGame()
     {
         // Load the game scene (make sure it's added to Build Settings)
-        SceneManager.LoadScene("InitialScene"); // Replace with your actual game scene name
+        SceneManager.LoadScene("InitialScene 1"); // Replace with your actual game scene name
 
         // Or load by index: SceneManager.LoadScene(1);
     }

@@ -1,62 +1,121 @@
 using UnityEngine;
+using System.Collections;
 
-public class RandomEncounter : MonoBehaviour
+public class RandomEncounterSystem : MonoBehaviour
 {
-    public float encounterChance = 0.05f;
-    public LayerMask grassLayer;
+    [Header("Encounter Settings")]
+    [Range(0f, 100f)]
+    public float encounterChance = 20f;  // 20% chance
+    public float checkInterval = 2f;  // Check every 2 seconds while moving
 
-    private float stepCounter = 0f;
-    private float stepThreshold = 0.5f;
-    private Vector2 lastPosition;
+    [Header("Requirements")]
+    public float minDistanceToTrigger = 1f;  // Must move at least this far
+
+    [Header("Enemy Setup")]
+    public GameObject[] possibleEnemies;  // Array of enemy prefabs
+    public int minEnemies = 1;
+    public int maxEnemies = 3;
+
+    private Transform player;
+    private Vector3 lastPosition;
+    private float timeSinceLastCheck = 0f;
+    private bool encounterActive = false;
 
     void Start()
     {
-        lastPosition = transform.position;
+        player = transform;
+        lastPosition = player.position;
     }
 
     void Update()
     {
-        // Only check in exploration states
-        GameStateManager.GameState state = GameStateManager.Instance.GetCurrentState();
+        // Don't check during battles
+        if (encounterActive) return;
+        if (GameStateManager.Instance.GetCurrentState() == GameStateManager.GameState.Battle) return;
 
-        if (state != GameStateManager.GameState.TownMap &&
-            state != GameStateManager.GameState.Town1 &&
-            state != GameStateManager.GameState.Town2 &&
-            state != GameStateManager.GameState.Town3 &&
-            state != GameStateManager.GameState.DungeonMap &&
-            state != GameStateManager.GameState.Dungeon1 &&
-            state != GameStateManager.GameState.Dungeon2 &&
-            state != GameStateManager.GameState.Dungeon3)
+        // Only check in dungeons (you can modify this)
+        GameStateManager.GameState currentState = GameStateManager.Instance.GetCurrentState();
+        if (currentState != GameStateManager.GameState.Dungeon1 &&
+            currentState != GameStateManager.GameState.Dungeon2 &&
+            currentState != GameStateManager.GameState.Dungeon3)
         {
             return;
         }
 
-        float distanceMoved = Vector2.Distance(transform.position, lastPosition);
+        timeSinceLastCheck += Time.deltaTime;
 
-        if (distanceMoved > stepThreshold)
+        if (timeSinceLastCheck >= checkInterval)
         {
-            stepCounter++;
-            lastPosition = transform.position;
-            CheckForEncounter();
+            float distanceMoved = Vector3.Distance(player.position, lastPosition);
+
+            if (distanceMoved >= minDistanceToTrigger)
+            {
+                CheckForEncounter();
+            }
+
+            lastPosition = player.position;
+            timeSinceLastCheck = 0f;
         }
     }
 
     void CheckForEncounter()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.zero, 0f, grassLayer);
+        float roll = Random.Range(0f, 100f);
 
-        if (hit.collider != null)
+        if (roll <= encounterChance)
         {
-            if (Random.value < encounterChance)
-            {
-                TriggerBattle();
-            }
+            Debug.Log($"Random encounter! (Rolled {roll}, needed {encounterChance})");
+            TriggerEncounter();
         }
     }
 
-    void TriggerBattle()
+    void TriggerEncounter()
     {
-        Debug.Log("Battle triggered!");
+        encounterActive = true;
+        StartCoroutine(StartBattle());
+    }
+
+    IEnumerator StartBattle()
+    {
+        // Freeze player
+        MonoBehaviour[] playerScripts = GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour script in playerScripts)
+        {
+            if (script != this && script != null)
+            {
+                script.enabled = false;
+            }
+        }
+
+        // Screen flash or transition effect (optional)
+        Debug.Log("Battle starting!");
+        yield return new WaitForSeconds(0.5f);
+
+        // Switch to battle
         GameStateManager.Instance.SwitchState(GameStateManager.GameState.Battle);
+
+        yield return new WaitForSeconds(0.3f);
+
+        // Spawn random enemies
+        if (BattleManager.Instance != null)
+        {
+            int enemyCount = Random.Range(minEnemies, maxEnemies + 1);
+            BattleManager.Instance.StartRandomBattle(possibleEnemies, enemyCount);
+        }
+    }
+
+    public void OnBattleEnd()
+    {
+        encounterActive = false;
+
+        // Re-enable player scripts
+        MonoBehaviour[] playerScripts = GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour script in playerScripts)
+        {
+            if (script != this && script != null)
+            {
+                script.enabled = true;
+            }
+        }
     }
 }
