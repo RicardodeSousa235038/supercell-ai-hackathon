@@ -1,120 +1,71 @@
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using TMPro;
+using System.Collections.Generic;
 
 public class CharacterSelectionManager : MonoBehaviour
 {
-    public static CharacterSelectionManager Instance { get; private set; }
-    
-    [Header("UI References")]
-    public GameObject selectionPanel;
-    public Button startButton;
-    public TextMeshProUGUI feedbackText;
-    
-    [Header("Settings")]
-    public string nextSceneName = "FirstMap";
-    
-    public static string SelectedCharacterName { get; private set; }
-    public static int SelectedCharacterIndex { get; private set; } = -1;
-    public static Sprite SelectedCharacterSprite { get; private set; }
-    
-    private CharacterCard currentlySelected = null;
-    
+    public static CharacterSelectionManager Instance;
+
+    [Header("All Character Cards")]
+    public List<CharacterCardSelector> allCards = new List<CharacterCardSelector>();
+
+    private CharacterCardSelector currentlySelectedCard;
+
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
     }
-    
+
     void Start()
     {
-        if (startButton != null)
+        if (allCards.Count == 0)
         {
-            startButton.interactable = false;
+            allCards.AddRange(FindObjectsByType<CharacterCardSelector>(FindObjectsSortMode.None));
         }
-        
-        UpdateFeedback();
+
+        SelectDefaultCard();
     }
-    
-    public void OnCharacterSelected(CharacterCard card)
+
+    public void SelectCard(CharacterCardSelector cardToSelect)
     {
-        if (currentlySelected != null && currentlySelected != card)
+        foreach (CharacterCardSelector card in allCards)
         {
-            currentlySelected.Deselect();
+            card.SetSelected(false);
         }
-        
-        currentlySelected = card;
-        SelectedCharacterName = card.characterName;
-        SelectedCharacterIndex = card.characterIndex;
-        SelectedCharacterSprite = card.characterSprite;
-        
-        if (startButton != null)
-        {
-            startButton.interactable = true;
-        }
-        
-        UpdateFeedback();
-        
-        Debug.Log($"Selected: {SelectedCharacterName} (Index: {SelectedCharacterIndex})");
+
+        cardToSelect.SetSelected(true);
+        currentlySelectedCard = cardToSelect;
+
+        Debug.Log("Selected character: " + cardToSelect.characterClass);
     }
-    
-    public void OnCharacterDeselected(CharacterCard card)
+
+    void SelectDefaultCard()
     {
-        if (currentlySelected == card)
+        CharacterCardSelector defaultCard = allCards.Find(card => card.characterClass.ToLower() == "knight");
+
+        if (defaultCard != null)
         {
-            currentlySelected = null;
-            SelectedCharacterName = null;
-            SelectedCharacterIndex = -1;
-            SelectedCharacterSprite = null;
-            
-            if (startButton != null)
-            {
-                startButton.interactable = false;
-            }
-            
-            UpdateFeedback();
+            SelectCard(defaultCard);
+        }
+        else if (allCards.Count > 0)
+        {
+            SelectCard(allCards[0]);
         }
     }
-    
-    void UpdateFeedback()
+
+    public CharacterCardSelector GetSelectedCard()
     {
-        if (feedbackText != null)
-        {
-            if (SelectedCharacterIndex == -1)
-            {
-                feedbackText.text = "Select your character to continue";
-                feedbackText.color = new Color(1f, 0.7f, 0.7f);
-            }
-            else
-            {
-                feedbackText.text = $"{SelectedCharacterName} selected!";
-                feedbackText.color = new Color(0.7f, 1f, 0.7f);
-            }
-        }
+        return currentlySelectedCard;
     }
-    
-    public void OnStartButtonPressed()
+
+    public bool HasSelectedCard()
     {
-        if (SelectedCharacterIndex != -1)
-        {
-            PlayerPrefs.SetString("SelectedCharacter", SelectedCharacterName);
-            PlayerPrefs.SetInt("SelectedCharacterIndex", SelectedCharacterIndex);
-            PlayerPrefs.Save();
-            
-            SceneManager.LoadScene(nextSceneName);
-        }
-    }
-    
-    public static bool HasSelection()
-    {
-        return SelectedCharacterIndex != -1;
+        return currentlySelectedCard != null;
     }
 }
