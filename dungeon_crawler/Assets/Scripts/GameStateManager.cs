@@ -59,12 +59,10 @@ public class GameStateManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            Debug.Log("GameStateManager created");
         }
         else
         {
             Destroy(gameObject);
-            Debug.Log("Duplicate GameStateManager destroyed");
         }
     }
 
@@ -75,7 +73,6 @@ public class GameStateManager : MonoBehaviour
 
     public void SwitchState(GameState newState)
     {
-        Debug.Log($"🔄 Switching from {currentState} to {newState}");
         currentState = newState;
 
         // Disable all states
@@ -164,8 +161,6 @@ public class GameStateManager : MonoBehaviour
                     mainCamera.transform.position = battleCameraPos;
                 break;
         }
-
-        Debug.Log($"✅ State switched to {currentState}");
     }
 
     public GameState GetCurrentState()
