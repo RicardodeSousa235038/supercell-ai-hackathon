@@ -3,18 +3,19 @@ using UnityEngine;
 public class AreaTransition : MonoBehaviour
 {
     public GameStateManager.GameState targetArea;
-    public Vector3 spawnPosition = Vector3.zero;  // Where to spawn the player/carriage
+    public Vector3 spawnPosition = Vector3.zero;
 
     private bool isTransitioning = false;
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("Something entered the trigger: " + other.gameObject.name + " with tag: " + other.tag);
+
         if (other.CompareTag("Player") && !isTransitioning)
         {
             isTransitioning = true;
-            Debug.Log("Entering: " + targetArea);
+            Debug.Log("Player detected! Entering: " + targetArea);
 
-            // Move the player/carriage to spawn position
             if (spawnPosition != Vector3.zero)
             {
                 other.transform.position = spawnPosition;
@@ -22,7 +23,6 @@ public class AreaTransition : MonoBehaviour
 
             GameStateManager.Instance.SwitchState(targetArea);
 
-            // Reset flag after a short delay
             Invoke("ResetTransition", 0.5f);
         }
     }

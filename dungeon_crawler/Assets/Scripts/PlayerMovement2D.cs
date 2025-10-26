@@ -3,12 +3,19 @@ using UnityEngine;
 public class PlayerMovement2D : MonoBehaviour
 {
     public float moveSpeed = 5f;
+    public bool horizontalOnly = false; // Set to true for town/dungeon players
+
     private Rigidbody2D rb;
     private Vector2 movement;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody2D is missing!");
+        }
     }
 
     void Update()
@@ -29,7 +36,16 @@ public class PlayerMovement2D : MonoBehaviour
         }
 
         movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
+
+        // Only allow vertical movement if not horizontalOnly
+        if (!horizontalOnly)
+        {
+            movement.y = Input.GetAxisRaw("Vertical");
+        }
+        else
+        {
+            movement.y = 0; // Lock vertical movement
+        }
     }
 
     void FixedUpdate()
@@ -45,7 +61,10 @@ public class PlayerMovement2D : MonoBehaviour
             state == GameStateManager.GameState.Dungeon2 ||
             state == GameStateManager.GameState.Dungeon3)
         {
-            rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
+            if (rb != null)
+            {
+                rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
+            }
         }
     }
 }
